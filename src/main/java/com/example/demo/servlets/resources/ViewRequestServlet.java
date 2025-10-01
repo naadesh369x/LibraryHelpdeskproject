@@ -1,5 +1,7 @@
 package com.example.demo.servlets.resources;
 
+// View
+
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -45,7 +47,7 @@ public class ViewRequestServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            //  Fetch only current user’s requests
+            //  Fetch  current user’s requests
             String sql = "SELECT * FROM ResourceRequest WHERE email=? ORDER BY created_at DESC";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, userEmail);

@@ -1,5 +1,5 @@
 package com.example.demo.servlets.resources;
-
+// Create
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,7 +23,7 @@ public class RequestResourceServlet extends HttpServlet {
         String author = request.getParameter("author");
         String type = request.getParameter("type");
         String justification = request.getParameter("justification");
-        String email = request.getParameter("email"); // get email from form
+        String email = request.getParameter("email");
 
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement()) {

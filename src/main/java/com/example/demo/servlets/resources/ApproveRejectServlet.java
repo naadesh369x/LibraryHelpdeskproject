@@ -1,6 +1,6 @@
 package com.example.demo.servlets.resources;
 
-
+//update Resource
 
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;

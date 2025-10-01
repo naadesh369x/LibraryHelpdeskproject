@@ -85,6 +85,6 @@ public class AdminRequestsServlet extends HttpServlet {
         request.setAttribute("rejectedCount", rejectedCount);
 
         // Forward to JSP
-        request.getRequestDispatcher("managerequests.jsp").forward(request, response);
+        request.getRequestDispatcher("updaterequests.jsp").forward(request, response);
     }
 }

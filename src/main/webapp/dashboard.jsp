@@ -209,7 +209,7 @@
         <a href="FeedbackListServlet" style="background: #f1c40f; color: #23272f; border-radius: 8px; padding: 12px 28px; font-size: 1rem; text-decoration: none; box-shadow: 0 2px 8px rgba(44,62,80,0.08); transition: background 0.2s;">
             <i class="fas fa-star"></i> See Reviews
         </a>
-        <a href="requestresource.jsp" style="background: #27ae60; color: #fff; border-radius: 8px; padding: 12px 28px; font-size: 1rem; text-decoration: none; box-shadow: 0 2px 8px rgba(44,62,80,0.08); transition: background 0.2s;">
+        <a href="addrequest.jsp" style="background: #27ae60; color: #fff; border-radius: 8px; padding: 12px 28px; font-size: 1rem; text-decoration: none; box-shadow: 0 2px 8px rgba(44,62,80,0.08); transition: background 0.2s;">
             <i class="fas fa-plus-circle"></i>  Add a Request
         </a>
     </div>

@@ -77,7 +77,7 @@
             <tr>
                 <td class="text-center"><%= req.get("id") %></td>
                 <td><%= req.get("title") %></td>
-                <td><%= req.get("description") %></td>
+                <td><%= req.get("justification") %></td>
                 <td class="text-center">
                     <span class="badge <%= badgeClass %>"><%= status %></span>
                 </td>
