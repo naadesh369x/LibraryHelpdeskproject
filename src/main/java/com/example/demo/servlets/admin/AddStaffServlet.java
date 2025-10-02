@@ -40,19 +40,19 @@ public class AddStaffServlet extends HttpServlet {
         try {
             age = Integer.parseInt(ageStr);
         } catch (NumberFormatException e) {
-            request.setAttribute("message", "⚠ Age must be a valid number!");
+            request.setAttribute("message", " Age must be a valid number!");
             request.getRequestDispatcher("staff-success.jsp").forward(request, response);
             return;
         }
 
         try (Connection conn = DBConnection.getConnection()) {
             if (conn == null) {
-                request.setAttribute("message", "⚠ Database connection failed!");
+                request.setAttribute("message", "Database connection failed!");
                 request.getRequestDispatcher("staff-success.jsp").forward(request, response);
                 return;
             }
 
-            // 1️⃣ Create Staff table if it doesn't exist (IDs = 1,3,5,7…)
+            //  Create Staff table if it doesn't exist (IDs = 1,3,5,7…)
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Staff' AND xtype='U')
                 CREATE TABLE Staff (
@@ -73,7 +73,7 @@ public class AddStaffServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // 2️⃣ Insert new staff
+            //  Insert new staff
             String insertSQL = "INSERT INTO Staff (firstName, lastName, email, password, age, gender, role, phoneNumber, hometown) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -90,7 +90,7 @@ public class AddStaffServlet extends HttpServlet {
 
                 int rows = ps.executeUpdate();
                 if (rows > 0) {
-                    request.setAttribute("message", "✅ Staff added successfully!");
+                    request.setAttribute("message", " Staff added successfully!");
                 } else {
                     request.setAttribute("message", "⚠ Failed to add staff.");
                 }
@@ -98,7 +98,7 @@ public class AddStaffServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "⚠ Database error: " + e.getMessage());
+            request.setAttribute("message", " Database error: " + e.getMessage());
         }
 
         // Forward to success page

@@ -25,7 +25,7 @@ public class FeedbackListServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            // Ensure 'feedbacks' table exists (SQL Server)
+            // Ensure 'feedbacks' table exists
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='feedbacks' AND xtype='U')
                 CREATE TABLE feedbacks (

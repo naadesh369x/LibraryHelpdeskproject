@@ -27,8 +27,8 @@ public class ReplyTicketServlet extends HttpServlet {
                             "id INT IDENTITY PRIMARY KEY, " +
                             "ticket_id INT NOT NULL, " +
                             "sender NVARCHAR(50) NOT NULL, " +
-                            "description NVARCHAR(MAX) NULL, " +   // store ticket description
-                            "message NVARCHAR(MAX) NOT NULL, " +   // store reply message
+                            "description NVARCHAR(MAX) NULL, " +
+                            "message NVARCHAR(MAX) NOT NULL, " +
                             "created_at DATETIME DEFAULT GETDATE(), " +
                             "FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE" +
                             ") " +

@@ -32,7 +32,7 @@ public class EditUserServlet extends HttpServlet {
                 sql = "SELECT id, firstName, lastName, email, role, phoneNumber, password FROM Members WHERE id = ?";
             } else {
                 sql = "SELECT id, firstName, lastName, email, role, phoneNumber, password FROM Staff WHERE id = ?";
-                userType = "Staff"; // fallback
+                userType = "Staff";
             }
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -46,7 +46,7 @@ public class EditUserServlet extends HttpServlet {
                         user.put("email", rs.getString("email"));
                         user.put("role", rs.getString("role"));
                         user.put("phone", rs.getString("phoneNumber"));
-                        user.put("password", rs.getString("password")); // current password
+                        user.put("password", rs.getString("password"));
                         user.put("userType", userType);
                     }
                 }
@@ -66,11 +66,11 @@ public class EditUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String id = request.getParameter("id");
-        String userType = request.getParameter("userType"); // "Staff" or "Member"
+        String userType = request.getParameter("userType");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phone");
-        String newPassword = request.getParameter("password"); // new password (optional)
+        String newPassword = request.getParameter("password");
 
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
@@ -93,7 +93,7 @@ public class EditUserServlet extends HttpServlet {
                 ps.setString(3, phone);
 
                 if (updatePassword) {
-                    ps.setString(4, newPassword); // ⚠ In production, hash the password
+                    ps.setString(4, newPassword);
                     ps.setInt(5, Integer.parseInt(id));
                 } else {
                     ps.setInt(4, Integer.parseInt(id));

@@ -16,7 +16,7 @@ public class DeleteReplyServlet extends HttpServlet {
 
         String replyId = request.getParameter("id");
 
-        // 1️⃣ Intentionally trigger 404 if replyId is missing
+        //   replyId is missing
         if (replyId == null || replyId.isEmpty()) {
             request.setAttribute("errorMessage", "Invalid reply ID.");
             request.getRequestDispatcher("/nonexistentvv.jsp").forward(request, response);

@@ -1,4 +1,4 @@
-package com.example.demo.servlets.tickets;
+package com.example.demo.optional;
 
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.*;

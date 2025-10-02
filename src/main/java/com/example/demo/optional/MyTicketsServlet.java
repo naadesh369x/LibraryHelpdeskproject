@@ -1,4 +1,4 @@
-package com.example.demo.servlets.tickets;
+package com.example.demo.optional;
 
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;
@@ -80,7 +80,7 @@ public class MyTicketsServlet extends HttpServlet {
                         try (ResultSet rs2 = ps2.executeQuery()) {
                             while (rs2.next()) {
                                 Map<String, String> reply = new HashMap<>();
-                                reply.put("message", rs2.getString("message")); // make sure column name matches DB
+                                reply.put("message", rs2.getString("message"));
                                 reply.put("created_at",
                                         rs2.getTimestamp("created_at") != null
                                                 ? rs2.getTimestamp("created_at").toString()

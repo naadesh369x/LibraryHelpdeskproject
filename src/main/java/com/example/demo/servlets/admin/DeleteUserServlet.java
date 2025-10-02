@@ -18,7 +18,7 @@ public class DeleteUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String userId = request.getParameter("id");
-        String userType = request.getParameter("userType"); // "Staff" or "Member"
+        String userType = request.getParameter("userType"); // "Member" or "Staff"
 
         if (userId == null || userId.isEmpty() || userType == null || userType.isEmpty()) {
             response.sendRedirect("manage-users?error=InvalidUserIdOrType");

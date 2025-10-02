@@ -36,7 +36,7 @@ public class AddFAQServlet extends HttpServlet {
 
         try (Connection con = DBConnection.getConnection()) {
 
-            // 1️⃣ Create table if it does not exist
+            //  Create table if it does not exist
             String createTableSQL = "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='faq' AND xtype='U') " +
                     "CREATE TABLE faq (" +
                     "id INT IDENTITY(1,1) PRIMARY KEY, " +
@@ -49,7 +49,7 @@ public class AddFAQServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // 2️⃣ Insert FAQ
+            //  Insert FAQ
             String insertSQL = "INSERT INTO faq (question, answer, image_path, created_at) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = con.prepareStatement(insertSQL)) {
                 ps.setString(1, question);
@@ -59,7 +59,7 @@ public class AddFAQServlet extends HttpServlet {
                 ps.executeUpdate();
             }
 
-            response.sendRedirect("listFAQAdmin.jsp"); // redirect to FAQ list page
+            response.sendRedirect("listFAQAdmin.jsp");
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().println("Error adding FAQ: " + e.getMessage());
