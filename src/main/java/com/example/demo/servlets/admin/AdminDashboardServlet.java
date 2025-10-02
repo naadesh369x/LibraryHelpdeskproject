@@ -40,9 +40,9 @@ public class AdminDashboardServlet extends HttpServlet {
                 }
             }
 
-            totalTickets = tickets.size(); // ✅ total tickets
+            totalTickets = tickets.size(); //
 
-            // Count solved + new
+            // Count the tickets
             String countQuery = "SELECT status, COUNT(*) AS cnt FROM tickets GROUP BY status";
             try (PreparedStatement ps = conn.prepareStatement(countQuery);
                  ResultSet rs = ps.executeQuery()) {
@@ -54,10 +54,10 @@ public class AdminDashboardServlet extends HttpServlet {
                 }
             }
 
-            //  Pending = All - Solved
+            //  Pending
             pendingTicketsCount = totalTickets - solvedTicketsCount;
 
-            //  Latest 5 clients
+
             String clientQuery = "SELECT TOP 5 name, CONVERT(varchar, created_at, 120) AS created_at " +
                     "FROM clients ORDER BY created_at DESC";
             try (PreparedStatement ps = conn.prepareStatement(clientQuery);
@@ -73,14 +73,14 @@ public class AdminDashboardServlet extends HttpServlet {
             request.setAttribute("error", "⚠ Database error: " + e.getMessage());
         }
 
-        //  Pass data to JSP
+
         request.setAttribute("tickets", tickets);
         request.setAttribute("newTicketsCount", newTicketsCount);
         request.setAttribute("solvedTicketsCount", solvedTicketsCount);
         request.setAttribute("pendingTicketsCount", pendingTicketsCount);
         request.setAttribute("newClients", newClients);
 
-        // Forward to JSP
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("admindashboard.jsp");
         dispatcher.forward(request, response);
     }

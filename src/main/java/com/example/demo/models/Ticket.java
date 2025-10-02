@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 public class Ticket {
     private int id;
-    private String title;      // Will also be returned by getSubject()
+    private String title;
     private String department;
     private LocalDate date;
-    private String client;     // Will also be returned by getUserName()
+    private String client;
     private String status;
 
     public Ticket(String hashtag, String problemOfInstallation, String product, String s, String johnDoe, String pending) {
-        // You might want to implement this constructor properly or remove it if unused
+
     }
 
     public Ticket(int id, String title, String department, LocalDate date, String client, String status) {
@@ -38,7 +38,6 @@ public class Ticket {
         this.title = title;
     }
 
-    // This makes JSP calls to getSubject() work
     public String getSubject() {
         return title;
     }
@@ -64,7 +63,6 @@ public class Ticket {
         this.client = client;
     }
 
-    // This makes JSP calls to getUserName() work
     public String getUserName() {
         return client;
     }

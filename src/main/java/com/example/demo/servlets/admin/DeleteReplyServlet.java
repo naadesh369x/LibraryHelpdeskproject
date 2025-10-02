@@ -16,7 +16,7 @@ public class DeleteReplyServlet extends HttpServlet {
 
         String replyId = request.getParameter("id");
 
-        //   replyId is missing
+      //validate reply id
         if (replyId == null || replyId.isEmpty()) {
             request.setAttribute("errorMessage", "Invalid reply ID.");
             request.getRequestDispatcher("/nonexistentvv.jsp").forward(request, response);
@@ -30,21 +30,21 @@ public class DeleteReplyServlet extends HttpServlet {
                 int rowsAffected = ps.executeUpdate();
 
                 if (rowsAffected > 0) {
-                    // Successfully deleted
+
                     request.setAttribute("errorMessage", "Deleted successfully, but showing 404 test.");
                     request.getRequestDispatcher("ViewAllRepliesServlet").forward(request, response);
                 } else {
 
                     request.setAttribute("errorMessage", "Reply not found.");
-                    request.getRequestDispatcher("/nonexistent2.jsp").forward(request, response); // <-- JSP does NOT exist
+                    request.getRequestDispatcher("/nonexistent2.jsp").forward(request, response);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Exception → trigger 404
+
             request.setAttribute("errorMessage", "Error deleting reply: " + e.getMessage());
-            request.getRequestDispatcher("/nonexistent3.jsp").forward(request, response); // <-- JSP does NOT exist
+            request.getRequestDispatcher("/nonexistent3.jsp").forward(request, response);
         }
     }
 

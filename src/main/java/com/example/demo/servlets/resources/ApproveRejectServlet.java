@@ -22,7 +22,7 @@ public class ApproveRejectServlet extends HttpServlet {
         String idStr = request.getParameter("id");
         String action = request.getParameter("action");
         String newStatus = null;
-
+//validaion
         if ("approve".equalsIgnoreCase(action)) {
             newStatus = "Approved";
         } else if ("reject".equalsIgnoreCase(action)) {

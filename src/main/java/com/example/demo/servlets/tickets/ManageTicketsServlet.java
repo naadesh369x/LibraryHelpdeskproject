@@ -63,7 +63,7 @@ public class ManageTicketsServlet extends HttpServlet {
             request.setAttribute("error", "⚠ Database error: " + e.getMessage());
         }
 
-        // Message history (empty initially)
+        // Message history
         List<String> messages = new ArrayList<>();
 
         // Pass data to JSP

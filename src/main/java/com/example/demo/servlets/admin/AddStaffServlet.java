@@ -27,11 +27,11 @@ public class AddStaffServlet extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String hometown = request.getParameter("hometown");
 
-        // Validate required fields
+        // Validate  fields
         if (firstName == null || lastName == null || email == null || password == null || ageStr == null ||
                 gender == null || role == null || phoneNumber == null || hometown == null ||
                 firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || ageStr.isEmpty()) {
-            request.setAttribute("message", "⚠ Please fill in all required fields!");
+            request.setAttribute("message", " Please fill in all required fields!");
             request.getRequestDispatcher("staff-success.jsp").forward(request, response);
             return;
         }
@@ -52,7 +52,7 @@ public class AddStaffServlet extends HttpServlet {
                 return;
             }
 
-            //  Create Staff table if it doesn't exist (IDs = 1,3,5,7…)
+            //  Create Staff table if it doesn't exist
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Staff' AND xtype='U')
                 CREATE TABLE Staff (
@@ -101,7 +101,7 @@ public class AddStaffServlet extends HttpServlet {
             request.setAttribute("message", " Database error: " + e.getMessage());
         }
 
-        // Forward to success page
+        // Forward to page
         RequestDispatcher dispatcher = request.getRequestDispatcher("staff-success.jsp");
         dispatcher.forward(request, response);
     }

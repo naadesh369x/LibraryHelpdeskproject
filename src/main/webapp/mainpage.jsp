@@ -6,21 +6,46 @@
     <link rel="stylesheet" href="css/user-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body {
+        body, html {
             margin: 0;
             padding: 0;
-            background: #f8f9fa;
+            height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Background video */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures video covers entire screen */
+            z-index: -2;
+        }
+
+        /* Dark overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.25); /* 25% opacity */
+            z-index: -1;
         }
 
         /* Top bar */
         .top-bar {
-            background-color: #2c3e50;
+            background-color: rgba(44, 62, 80, 0.9);
             color: white;
             padding: 12px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         .top-bar .left h2 {
@@ -47,16 +72,17 @@
         .main-content {
             text-align: center;
             margin-top: 120px;
+            color: white;
+            position: relative;
+            z-index: 1;
         }
 
         .main-content h1 {
             font-size: 42px;
-            color: #2c3e50;
         }
 
         .main-content p {
             font-size: 18px;
-            color: #555;
             margin-top: 10px;
         }
 
@@ -78,6 +104,15 @@
     </style>
 </head>
 <body>
+
+<!-- Background Video -->
+<video autoplay muted loop id="bg-video">
+    <source src="videos/library-bg.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video>
+
+<!-- Overlay -->
+<div class="overlay"></div>
 
 <!-- Top navigation bar -->
 <div class="top-bar">

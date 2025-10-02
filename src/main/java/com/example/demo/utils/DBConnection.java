@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 
 public class DBConnection {
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=users;encrypt=false;";
-    private static final String USER = "sa";          // change this
-    private static final String PASSWORD = "12345678"; // change this
+    private static final String USER = "sa";
+    private static final String PASSWORD = "12345678";
 
     public static Connection getConnection() throws Exception {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

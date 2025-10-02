@@ -26,11 +26,11 @@ public class LoginServlet extends HttpServlet {
             String sql = "SELECT * FROM members WHERE email = ? AND password = ?";
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setString(1, email);
-                ps.setString(2, password); // ⚠️ plain password, for demo only
+                ps.setString(2, password);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        // ✅ User found
+                        // User found
                         HttpSession session = request.getSession();
                         session.setAttribute("userId", rs.getInt("id"));
                         session.setAttribute("firstName", rs.getString("firstname"));

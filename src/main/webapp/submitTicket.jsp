@@ -1,13 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    // Get current session attributes
     String currentEmail = (session != null) ? (String) session.getAttribute("email") : null;
     String firstName = (session != null) ? (String) session.getAttribute("firstName") : null;
 
     if (currentEmail == null) {
-        // If not logged in → redirect to login
         response.sendRedirect("login.jsp?error=Please+login+first");
         return;
+
     }
 %>
 <!DOCTYPE html>

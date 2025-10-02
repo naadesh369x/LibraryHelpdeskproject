@@ -19,21 +19,21 @@ public class RegisterServlet extends HttpServlet {
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
         String ageStr = request.getParameter("age");
-        String phoneNumber = request.getParameter("phoneNumber");  // renamed
+        String phoneNumber = request.getParameter("phoneNumber");
         String hometown = request.getParameter("hometown");
         String gender = request.getParameter("gender");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-        String role = "Member"; // default role
+        String role = "Member";
 
-        // ✅ Check password match
+        // Check password match
         if (!password.equals(confirmPassword)) {
             request.setAttribute("message", "⚠ Passwords do not match!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // ✅ Validate age
+        //  Validate age
         int age;
         try {
             age = Integer.parseInt(ageStr);
@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            // 1️⃣ Create Members table if it does not exist (ID increments by 2)
+            // Create Members table if it does not exist (ID increments by 2)
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Members' AND xtype='U')
                 CREATE TABLE Members (
@@ -71,7 +71,7 @@ public class RegisterServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // 2️⃣ Insert new member
+            //  Insert new member
             String insertSQL = "INSERT INTO Members (firstName, lastName, email, password, age, gender, role, phoneNumber, hometown) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -79,27 +79,27 @@ public class RegisterServlet extends HttpServlet {
                 ps.setString(1, firstName);
                 ps.setString(2, lastName);
                 ps.setString(3, email);
-                ps.setString(4, password); // ⚠ Store hashed password in production
+                ps.setString(4, password);
                 ps.setInt(5, age);
                 ps.setString(6, gender);
                 ps.setString(7, role);
-                ps.setString(8, phoneNumber); // updated
+                ps.setString(8, phoneNumber);
                 ps.setString(9, hometown);
 
                 ps.executeUpdate();
             }
 
-            // ✅ Success → forward to mainpage.jsp
-            request.setAttribute("message", "✅ Registration successful!");
+
+            request.setAttribute("message", " Registration successful!");
             request.getRequestDispatcher("mainpage.jsp").forward(request, response);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             // Email already exists
-            request.setAttribute("message", "⚠ Email already exists!");
+            request.setAttribute("message", "Email already exists!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "⚠ Registration failed!");
+            request.setAttribute("message", " Registration failed!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }

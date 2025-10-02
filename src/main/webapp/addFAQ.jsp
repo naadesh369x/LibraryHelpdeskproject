@@ -80,7 +80,7 @@
 <body>
 
 <div class="faq-container">
-    <!-- Back to Dashboard -->
+    //back to dashboard
     <a href="javascript:history.back()" class="btn btn-secondary btn-sm text-white m-2">⬅ Go Back</a>
 
     <h2>Add FAQ</h2>
@@ -92,19 +92,19 @@
             <input type="text" name="question" class="form-control" required>
         </div>
 
-        <!-- Answer -->
+       //answer
         <div class="mb-3">
             <label>Answer:</label>
             <textarea name="answer" rows="3" class="form-control" required></textarea>
         </div>
 
-        <!-- Image (Optional) -->
+
         <div class="mb-3">
             <label>Attach Image (optional):</label>
             <input type="file" name="faqImage" class="form-control" accept="image/*">
         </div>
 
-        <!-- Submit -->
+
         <button type="submit" class="btn-submit">✅ Publish FAQ</button>
     </form>
 </div>

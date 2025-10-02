@@ -20,7 +20,7 @@ public class ViewAllRepliesServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
 
             String sql = "SELECT r.id AS reply_id, r.ticket_id, r.sender, r.message, r.created_at, " +
-                    "t.username, t.category, t.description " +   // 👈 Added description
+                    "t.username, t.category, t.description " +
                     "FROM ticket_replies r " +
                     "INNER JOIN tickets t ON r.ticket_id = t.id " +
                     "ORDER BY r.created_at DESC";

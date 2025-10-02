@@ -46,8 +46,7 @@ public class ViewRequestServlet extends HttpServlet {
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
             }
-
-            //  Fetch  current user’s requests
+            
             String sql = "SELECT * FROM ResourceRequest WHERE email=? ORDER BY created_at DESC";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, userEmail);

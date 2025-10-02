@@ -29,7 +29,6 @@
         }
     } catch(Exception e){ e.printStackTrace(); }
 
-    // Get selected ticket details if "ticketId" parameter exists
     String selectedTicketId = request.getParameter("ticketId");
     Map<String,String> currentTicket = null;
     List<Map<String,String>> repliesList = new ArrayList<>();
@@ -52,7 +51,7 @@
                 }
             }
 
-            // Fetch replies for the selected ticket (fixed table name)
+            // Fetch replies for the selected ticket
             if(currentTicket != null){
                 String replySql = "SELECT * FROM ticket_replies WHERE ticket_id=? ORDER BY created_at ASC";
                 try(PreparedStatement ps2 = conn.prepareStatement(replySql)){
@@ -73,7 +72,6 @@
         } catch(Exception e){ e.printStackTrace(); }
     }
 
-    // Messages from servlet redirects
     String successMsg = request.getParameter("success");
     String errorMsg = request.getParameter("error");
 %>

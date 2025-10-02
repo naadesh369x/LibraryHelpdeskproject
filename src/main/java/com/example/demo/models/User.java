@@ -8,7 +8,7 @@ public class User {
     protected String password;
     protected String role;
 
-    // Constructor (without ID, for new users)
+    // Constructor
     public User(String firstName, String lastName, String email, String password, String role) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -17,7 +17,6 @@ public class User {
         this.role = role;
     }
 
-    // Constructor with ID (for existing users)
     public User(int id, String firstName, String lastName, String email, String password, String role) {
         this.id = id;
         this.firstName = firstName;

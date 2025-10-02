@@ -23,7 +23,7 @@ public class EditUserServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String userId = request.getParameter("id");
-        String userType = request.getParameter("userType"); // "Staff" or "Member"
+        String userType = request.getParameter("userType");
         Map<String, String> user = null;
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -75,7 +75,7 @@ public class EditUserServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
             boolean updatePassword = newPassword != null && !newPassword.trim().isEmpty();
-
+//validation
             if ("Member".equalsIgnoreCase(userType)) {
                 sql = updatePassword ?
                         "UPDATE Members SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE id=?" :

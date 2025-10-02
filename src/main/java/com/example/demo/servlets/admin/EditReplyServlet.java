@@ -15,7 +15,7 @@ import java.util.Map;
 @WebServlet("/EditReplyServlet")
 public class EditReplyServlet extends HttpServlet {
 
-    // Load reply + ticket details for editing
+    // Load reply with ticket
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

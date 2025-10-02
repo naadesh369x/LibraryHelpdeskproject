@@ -23,7 +23,7 @@ public class AdminRegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // ✅ Validate password match
+        //  Validate password match
         if (!password.equals(confirmPassword)) {
             response.sendRedirect("adminRegister.jsp?error=Passwords+do+not+match");
             return;
@@ -31,7 +31,7 @@ public class AdminRegisterServlet extends HttpServlet {
 
         try (Connection con = DBConnection.getConnection()) {
 
-            // 1️⃣ Create admins table if it does not exist (SQL Server syntax)
+            // Create admins table if it does not exist (SQL Server syntax)
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='admins' AND xtype='U')
                 CREATE TABLE admins (
@@ -47,14 +47,14 @@ public class AdminRegisterServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // 2️⃣ Insert admin
+            //  Insert admin
             String insertSQL = "INSERT INTO admins (firstname, lastname, email, username, password) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement ps = con.prepareStatement(insertSQL)) {
                 ps.setString(1, firstName);
                 ps.setString(2, lastName);
                 ps.setString(3, email);
                 ps.setString(4, username);
-                ps.setString(5, password); // ⚠️ In production, hash the password
+                ps.setString(5, password);
 
                 ps.executeUpdate();
             }

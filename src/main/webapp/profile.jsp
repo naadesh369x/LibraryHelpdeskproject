@@ -7,7 +7,7 @@
         return;
     }
 
-    // Fetch user details from members table
+
     String firstName = "", lastName = "", phoneNumber = "", password = "";
     try (Connection conn = DBConnection.getConnection()) {
         String sql = "SELECT * FROM members WHERE email=?";

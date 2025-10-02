@@ -25,7 +25,7 @@ public class AddFAQServlet extends HttpServlet {
 
         Part filePart = request.getPart("faqImage");
         String fileName = null;
-
+//validate
         if (filePart != null && filePart.getSize() > 0) {
             fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
             String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";

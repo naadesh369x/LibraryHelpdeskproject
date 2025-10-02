@@ -7,6 +7,7 @@
     List<Map<String,String>> approvedRequests = new ArrayList<>();
     List<Map<String,String>> rejectedRequests = new ArrayList<>();
 
+//validate status
     if (requests != null) {
         for (Map<String,String> req : requests) {
             String status = req.get("status");
