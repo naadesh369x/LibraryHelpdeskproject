@@ -12,34 +12,11 @@
         body { background-color: #1b1b1b; color: #fff; min-height: 100vh; margin: 0; }
         .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 220px; background-color: #0f0f0f; padding-top: 20px; overflow-y: auto; z-index: 1030; }
         .main-content { margin-left: 220px; padding: 2rem; min-height: 100vh; }
-
-        /* Header Bar */
-        .header-bar {
-            position: fixed;
-            top: 0;
-            left: 220px;
-            right: 0;
-            height: 60px;
-            background-color: #121212;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid #333;
-            z-index: 1040;
-        }
+        .header-bar { position: fixed; top: 0; left: 220px; right: 0; height: 60px; background-color: #121212; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #333; z-index: 1040; }
         .header-bar h5 { margin: 0; font-weight: 600; color: #fff; }
-        .logout-btn {
-            background: #ff4444;
-            border: none;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            transition: background 0.3s;
-        }
+        .logout-btn { background: #ff4444; border: none; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: background 0.3s; }
         .logout-btn:hover { background: #cc0000; }
-        .main-content { margin-top: 70px; } /* push content below header */
+        .main-content { margin-top: 70px; }
         .sidebar a { color: #ccc; text-decoration: none; padding: 12px 20px; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: background-color 0.3s, color 0.3s; }
         .sidebar a:hover, .sidebar a:focus { background-color: #2a2a2a; color: #fff; outline: none; }
         .sidebar h4 { color: #fff; margin-bottom: 1.5rem; text-align: center; font-weight: 700; }
@@ -66,20 +43,18 @@
     <a href="admindashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
     <a href="ManageTicketsServlet"><i class="fas fa-ticket-alt"></i> Manage Tickets</a>
     <a href="AdminRequestsServlet"><i class="fas fa-plus-circle"></i> Manage request resources</a>
-    <a href="listFAQAdmin.jsp"><i class="fas fa-plus-circle"></i> Manage FAQ</a>
+    <a href="listFAQAdmin.jsp"><i class="fas fa-question-circle"></i> Manage FAQ</a>
     <a href="ViewAllRepliesServlet"><i class="fas fa-hourglass-half"></i> Replied Tickets</a>
-    <a href="FeedbackListServlet"><i class="fas fa-check-circle"></i> Feedbacks</a>
+    <a href="FeedbackListServlet"><i class="fas fa-comment-dots"></i> Feedbacks</a>
     <a href="add-staff.jsp"><i class="fas fa-users"></i> Add Staffs</a>
-    <a href="manage-users" class="get-started-btn"><i class="fas fa-play-circle"></i> Manage Users</a>
+    <a href="manage-users"><i class="fas fa-user-cog"></i> Manage Users</a>
     <a href="profile.jsp"><i class="fas fa-cog"></i> Profile Settings</a>
 </nav>
 
 <!-- Header Bar -->
 <header class="header-bar">
     <h5>Admin Dashboard</h5>
-    <a href="mainpage.jsp" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
+    <a href="mainpage.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </header>
 
 <!-- Main Content -->
@@ -88,49 +63,47 @@
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         int totalTickets = 0, solvedTickets = 0, pendingTickets = 0;
 
         try {
             conn = com.example.demo.utils.DBConnection.getConnection();
 
+            // Get Total Tickets
             ps = conn.prepareStatement("SELECT COUNT(*) AS total FROM tickets");
             rs = ps.executeQuery();
             if(rs.next()) totalTickets = rs.getInt("total");
             rs.close(); ps.close();
 
+            // Get Solved Tickets
             ps = conn.prepareStatement("SELECT COUNT(*) AS solved FROM tickets WHERE status='Solved'");
             rs = ps.executeQuery();
             if(rs.next()) solvedTickets = rs.getInt("solved");
             rs.close(); ps.close();
 
-            pendingTickets = totalTickets - solvedTickets;
-        } catch(Exception e) { e.printStackTrace(); }
+            // Get Pending Tickets
+            ps = conn.prepareStatement("SELECT COUNT(*) AS pending FROM tickets WHERE status='Pending'");
+            rs = ps.executeQuery();
+            if(rs.next()) pendingTickets = rs.getInt("pending");
+            rs.close(); ps.close();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     %>
 
     <!-- Stats Cards -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
-            <div class="card card-green text-white p-3">
-                <h5>All Tickets</h5>
-                <h2><%= totalTickets %></h2>
-            </div>
+            <div class="card card-green text-white p-3"><h5>All Tickets</h5><h2><%= totalTickets %></h2></div>
         </div>
         <div class="col-md-4 mb-3">
-            <div class="card card-blue text-white p-3">
-                <h5>Solved Tickets</h5>
-                <h2><%= solvedTickets %></h2>
-            </div>
+            <div class="card card-blue text-white p-3"><h5>Solved Tickets</h5><h2><%= solvedTickets %></h2></div>
         </div>
         <div class="col-md-4 mb-3">
-            <div class="card card-red text-white p-3">
-                <h5>Pending Tickets</h5>
-                <h2><%= pendingTickets %></h2>
-            </div>
+            <div class="card card-red text-white p-3"><h5>Pending Tickets</h5><h2><%= pendingTickets %></h2></div>
         </div>
     </div>
 
-    <!-- Tickets Table & Users Table -->
     <div class="row">
         <!-- Recent Tickets -->
         <div class="col-md-8 mb-3">
@@ -140,7 +113,7 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Ticket ID</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Category</th>
@@ -151,32 +124,30 @@
                         <tbody>
                         <%
                             try {
-                                String sqlTickets = "SELECT TOP 10 id, username, email, category, status, created_at FROM tickets ORDER BY created_at DESC";
+                                String sqlTickets = "SELECT TOP 10 ticketId, username, email, category, status, created_at FROM tickets ORDER BY created_at DESC";
                                 ps = conn.prepareStatement(sqlTickets);
                                 rs = ps.executeQuery();
                                 while(rs.next()) {
+                                    String status = rs.getString("status");
                         %>
                         <tr>
-                            <td><%= rs.getInt("id") %></td>
+                            <td><%= rs.getInt("ticketId") %></td>
                             <td><%= rs.getString("username") %></td>
                             <td><%= rs.getString("email") %></td>
                             <td><%= rs.getString("category") %></td>
                             <td><%= rs.getTimestamp("created_at") %></td>
-                            <td>
-                                <span class="status-badge status-<%= rs.getString("status").toLowerCase() %>">
-                                    <%= rs.getString("status") %>
-                                </span>
-                            </td>
+                            <td><span class="status-badge status-<%= status.toLowerCase() %>"><%= status %></span></td>
                         </tr>
                         <%
                             }
                         } catch(Exception e) {
                         %>
-                        <tr>
-                            <td colspan="6">Error fetching tickets: <%= e.getMessage() %></td>
-                        </tr>
+                        <tr><td colspan="6" class="text-danger">Error fetching tickets: <%= e.getMessage() %></td></tr>
                         <%
-                            } finally { if(rs != null) rs.close(); if(ps != null) ps.close(); }
+                            } finally {
+                                try { if(rs != null) rs.close(); } catch(SQLException e) { e.printStackTrace(); }
+                                try { if(ps != null) ps.close(); } catch(SQLException e) { e.printStackTrace(); }
+                            }
                         %>
                         </tbody>
                     </table>
@@ -192,10 +163,11 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                         <tr>
+                            <th>Staff ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
-                            <th>Role</th>
+                            <th>Age</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -203,26 +175,28 @@
                             PreparedStatement staffPs = null;
                             ResultSet staffRs = null;
                             try {
-                                String sqlStaff = "SELECT firstName, lastName, email, role FROM Staff ORDER BY id DESC";
+                                String sqlStaff = "SELECT TOP 5 staffid, firstName, lastName, email, age FROM Staff ORDER BY staffid DESC";
                                 staffPs = conn.prepareStatement(sqlStaff);
                                 staffRs = staffPs.executeQuery();
                                 while(staffRs.next()) {
                         %>
                         <tr>
+                            <td><%= staffRs.getInt("staffid") %></td>
                             <td><%= staffRs.getString("firstName") %></td>
                             <td><%= staffRs.getString("lastName") %></td>
                             <td><%= staffRs.getString("email") %></td>
-                            <td><%= staffRs.getString("role") %></td>
+                            <td><%= staffRs.getInt("age") %></td>
                         </tr>
                         <%
                             }
                         } catch(Exception e) {
                         %>
-                        <tr>
-                            <td colspan="4">Error fetching staff data: <%= e.getMessage() %></td>
-                        </tr>
+                        <tr><td colspan="5" class="text-danger">Error fetching staff: <%= e.getMessage() %></td></tr>
                         <%
-                            } finally { if(staffRs != null) staffRs.close(); if(staffPs != null) staffPs.close(); }
+                            } finally {
+                                try { if(staffRs != null) staffRs.close(); } catch(SQLException e) { e.printStackTrace(); }
+                                try { if(staffPs != null) staffPs.close(); } catch(SQLException e) { e.printStackTrace(); }
+                            }
                         %>
                         </tbody>
                     </table>
@@ -236,6 +210,7 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                         <tr>
+                            <th>User ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
@@ -247,12 +222,13 @@
                             PreparedStatement memberPs = null;
                             ResultSet memberRs = null;
                             try {
-                                String sqlMembers = "SELECT TOP 10 firstName, lastName, email, phoneNumber FROM Members ORDER BY id DESC";
+                                String sqlMembers = "SELECT TOP 5 userid, firstName, lastName, email, phoneNumber FROM Members ORDER BY userid DESC";
                                 memberPs = conn.prepareStatement(sqlMembers);
                                 memberRs = memberPs.executeQuery();
                                 while(memberRs.next()) {
                         %>
                         <tr>
+                            <td><%= memberRs.getInt("userid") %></td>
                             <td><%= memberRs.getString("firstName") %></td>
                             <td><%= memberRs.getString("lastName") %></td>
                             <td><%= memberRs.getString("email") %></td>
@@ -262,12 +238,12 @@
                             }
                         } catch(Exception e) {
                         %>
-                        <tr>
-                            <td colspan="4">Error fetching members: <%= e.getMessage() %></td>
-                        </tr>
+                        <tr><td colspan="5" class="text-danger">Error fetching members: <%= e.getMessage() %></td></tr>
                         <%
-                            } finally { if(memberRs != null) memberRs.close(); if(memberPs != null) memberPs.close(); }
-                            if(conn != null) conn.close();
+                            } finally {
+                                try { if(memberRs != null) memberRs.close(); } catch(SQLException e) { e.printStackTrace(); }
+                                try { if(memberPs != null) memberPs.close(); } catch(SQLException e) { e.printStackTrace(); }
+                            }
                         %>
                         </tbody>
                     </table>
@@ -295,10 +271,24 @@
                     backgroundColor: ['#33b5e5', '#00c851', '#ffbb33']
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#ccc' } },
+                    x: { ticks: { color: '#ccc' } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff' } }
+                }
+            }
         });
     </script>
 
+    <%
+        // Close connection at the end
+        try { if(conn != null) conn.close(); } catch(SQLException e) { e.printStackTrace(); }
+    %>
 </main>
 </body>
 </html>

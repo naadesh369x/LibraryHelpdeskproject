@@ -9,8 +9,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.DatabaseMetaData;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @WebServlet("/EditReplyServlet")
 public class EditReplyServlet extends HttpServlet {
@@ -24,10 +28,41 @@ public class EditReplyServlet extends HttpServlet {
         Map<String, String> reply = null;
         Map<String, String> ticket = null;
 
+        if (replyId == null || replyId.isEmpty()) {
+            request.setAttribute("error", "Reply ID is missing");
+            request.getRequestDispatcher("adminAllReplies.jsp").forward(request, response);
+            return;
+        }
+
         try (Connection conn = DBConnection.getConnection()) {
 
+            // Check table structure to determine correct column names
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet ticketsColumns = metaData.getColumns(null, null, "tickets", null);
+            Set<String> ticketColumnNames = new HashSet<>();
+            while (ticketsColumns.next()) {
+                ticketColumnNames.add(ticketsColumns.getString("COLUMN_NAME").toLowerCase());
+            }
+            ticketsColumns.close();
+
+            ResultSet repliesColumns = metaData.getColumns(null, null, "ticket_replies", null);
+            Set<String> replyColumnNames = new HashSet<>();
+            while (repliesColumns.next()) {
+                replyColumnNames.add(repliesColumns.getString("COLUMN_NAME").toLowerCase());
+            }
+            repliesColumns.close();
+
+            // Determine the correct column names based on what exists in the database
+            String ticketIdColumn = ticketColumnNames.contains("ticketid") ? "ticketId" :
+                    (ticketColumnNames.contains("id") ? "id" : "ticket_id");
+            String replyIdColumn = replyColumnNames.contains("id") ? "id" : "reply_id";
+            String replyTicketIdColumn = replyColumnNames.contains("ticket_id") ? "ticket_id" :
+                    (replyColumnNames.contains("ticketid") ? "ticketId" : "id");
+
             // Get reply details
-            String replySql = "SELECT id, ticket_id, sender, message, created_at FROM tickets_replies WHERE id = ?";
+            String replySql = "SELECT " + replyIdColumn + " AS id, " + replyTicketIdColumn + " AS ticket_id, " +
+                    "sender, message, created_at, updated_at FROM ticket_replies WHERE " + replyIdColumn + " = ?";
+
             try (PreparedStatement ps = conn.prepareStatement(replySql)) {
                 ps.setInt(1, Integer.parseInt(replyId));
                 try (ResultSet rs = ps.executeQuery()) {
@@ -38,13 +73,23 @@ public class EditReplyServlet extends HttpServlet {
                         reply.put("sender", rs.getString("sender"));
                         reply.put("message", rs.getString("message"));
                         reply.put("created_at", rs.getString("created_at"));
+
+                        // Check if updated_at exists
+                        if (replyColumnNames.contains("updated_at")) {
+                            String updatedAt = rs.getString("updated_at");
+                            if (updatedAt != null) {
+                                reply.put("updated_at", updatedAt);
+                            }
+                        }
                     }
                 }
             }
 
             // Get ticket details for this reply
             if (reply != null) {
-                String ticketSql = "SELECT id, username, email, category, description, status, created_at FROM tickets WHERE id = ?";
+                String ticketSql = "SELECT " + ticketIdColumn + " AS id, username, email, category, " +
+                        "description, status, created_at FROM tickets WHERE " + ticketIdColumn + " = ?";
+
                 try (PreparedStatement ps = conn.prepareStatement(ticketSql)) {
                     ps.setInt(1, Integer.parseInt(reply.get("ticket_id")));
                     try (ResultSet rs = ps.executeQuery()) {
@@ -62,9 +107,20 @@ public class EditReplyServlet extends HttpServlet {
                 }
             }
 
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid reply ID format");
+            request.getRequestDispatcher("adminAllReplies.jsp").forward(request, response);
+            return;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("adminAllReplies.jsp").forward(request, response);
+            return;
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Error loading reply: " + e.getMessage());
+            request.getRequestDispatcher("adminAllReplies.jsp").forward(request, response);
+            return;
         }
 
         request.setAttribute("reply", reply);
@@ -81,25 +137,56 @@ public class EditReplyServlet extends HttpServlet {
         String message = request.getParameter("replyText");
 
         if (id == null || message == null || message.trim().isEmpty()) {
-            response.sendRedirect("all-replies.jsp?error=Missing+data");
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", "Missing required data");
+            response.sendRedirect("ViewAllRepliesServlet");
             return;
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "UPDATE tickets_replies SET message = ?, updated_at = NOW() WHERE id = ?";
+
+            // Check if updated_at column exists
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet columns = metaData.getColumns(null, null, "ticket_replies", "updated_at");
+            boolean hasUpdatedAt = columns.next();
+            columns.close();
+
+            // Build SQL based on available columns
+            String sql;
+            if (hasUpdatedAt) {
+                sql = "UPDATE ticket_replies SET message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+            } else {
+                sql = "UPDATE ticket_replies SET message = ? WHERE id = ?";
+            }
+
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, message);
                 ps.setInt(2, Integer.parseInt(id));
-                ps.executeUpdate();
+
+                int rowsUpdated = ps.executeUpdate();
+
+                if (rowsUpdated == 0) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("errorMessage", "Reply not found or update failed");
+                } else {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("successMessage", "Reply updated successfully");
+                }
             }
+        } catch (NumberFormatException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", "Invalid reply ID format");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", "Database error: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error updating reply: " + e.getMessage());
-            request.getRequestDispatcher("editReply.jsp").forward(request, response);
-            return;
+            HttpSession session = request.getSession();
+            session.setAttribute("errorMessage", "Error updating reply: " + e.getMessage());
         }
 
         // Redirect back to replies management page
-        response.sendRedirect("all-replies.jsp?success=ReplyUpdated");
+        response.sendRedirect("ViewAllRepliesServlet");
     }
 }

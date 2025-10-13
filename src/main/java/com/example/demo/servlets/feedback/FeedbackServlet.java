@@ -29,11 +29,11 @@ public class FeedbackServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            //  Create table if not exists
+            // ✅ Create table if not exists (faqid instead of id)
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='feedbacks' AND xtype='U')
                 CREATE TABLE feedbacks (
-                    id INT IDENTITY(1,1) PRIMARY KEY,
+                    faqid INT IDENTITY(1,1) PRIMARY KEY,
                     firstname VARCHAR(100) NOT NULL,
                     lastname VARCHAR(100) NOT NULL,
                     email VARCHAR(150) NOT NULL,
@@ -46,7 +46,7 @@ public class FeedbackServlet extends HttpServlet {
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSQL);
 
-            //  Insert feedback
+            // ✅ Insert feedback
             String sql = "INSERT INTO feedbacks (firstname, lastname, email, comment, rating) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, firstname);

@@ -27,10 +27,14 @@ public class DeleteUserServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
+
             if ("Member".equalsIgnoreCase(userType)) {
-                sql = "DELETE FROM Members WHERE id = ?";
+                sql = "DELETE FROM Members WHERE userid = ?"; // updated column name
+            } else if ("Staff".equalsIgnoreCase(userType)) {
+                sql = "DELETE FROM Staff WHERE staffid = ?"; // updated column name
             } else {
-                sql = "DELETE FROM Staff WHERE id = ?";
+                response.sendRedirect("manage-users?error=InvalidUserType");
+                return;
             }
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {

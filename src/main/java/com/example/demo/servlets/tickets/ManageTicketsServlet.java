@@ -17,7 +17,7 @@ public class ManageTicketsServlet extends HttpServlet {
             throws ServletException, IOException {
 
         List<Map<String, String>> tickets = new ArrayList<>();
-        String selectedTicketId = request.getParameter("id");
+        String selectedTicketId = request.getParameter("ticketId");
 
         // Selected ticket details
         String selectedDescription = "";
@@ -27,9 +27,13 @@ public class ManageTicketsServlet extends HttpServlet {
         String selectedUsername = "";
         String selectedStatus = "";
 
+        // Replies for the selected ticket
+        List<Map<String, String>> replies = new ArrayList<>();
+
         try (Connection conn = DBConnection.getConnection()) {
 
-            String query = "SELECT id, username, category, description, email, status, " +
+            // Updated query to use ticketId instead of id
+            String query = "SELECT ticketId, username, category, description, email, status, " +
                     "CONVERT(varchar, created_at, 120) AS created_at " +
                     "FROM tickets ORDER BY created_at DESC";
 
@@ -38,7 +42,7 @@ public class ManageTicketsServlet extends HttpServlet {
 
                 while (rs.next()) {
                     Map<String, String> ticket = new HashMap<>();
-                    ticket.put("id", rs.getString("id"));
+                    ticket.put("ticketId", rs.getString("ticketId"));
                     ticket.put("username", rs.getString("username"));
                     ticket.put("category", rs.getString("category"));
                     ticket.put("description", rs.getString("description"));
@@ -47,7 +51,7 @@ public class ManageTicketsServlet extends HttpServlet {
                     ticket.put("created_at", rs.getString("created_at"));
                     tickets.add(ticket);
 
-                    if (selectedTicketId != null && selectedTicketId.equals(rs.getString("id"))) {
+                    if (selectedTicketId != null && selectedTicketId.equals(rs.getString("ticketId"))) {
                         selectedDescription = rs.getString("description");
                         selectedEmail = rs.getString("email");
                         selectedCategory = rs.getString("category");
@@ -58,13 +62,30 @@ public class ManageTicketsServlet extends HttpServlet {
                 }
             }
 
+            // Fetch replies for the selected ticket if one is selected
+            if (selectedTicketId != null) {
+                String replyQuery = "SELECT sender, message, " +
+                        "CONVERT(varchar, created_at, 120) AS created_at " +
+                        "FROM ticket_replies WHERE ticket_id = ? ORDER BY created_at ASC";
+
+                try (PreparedStatement replyPs = conn.prepareStatement(replyQuery)) {
+                    replyPs.setInt(1, Integer.parseInt(selectedTicketId));
+                    try (ResultSet replyRs = replyPs.executeQuery()) {
+                        while (replyRs.next()) {
+                            Map<String, String> reply = new HashMap<>();
+                            reply.put("sender", replyRs.getString("sender"));
+                            reply.put("message", replyRs.getString("message"));
+                            reply.put("created_at", replyRs.getString("created_at"));
+                            replies.add(reply);
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "⚠ Database error: " + e.getMessage());
         }
-
-        // Message history
-        List<String> messages = new ArrayList<>();
 
         // Pass data to JSP
         request.setAttribute("tickets", tickets);
@@ -75,8 +96,9 @@ public class ManageTicketsServlet extends HttpServlet {
         request.setAttribute("email", selectedEmail);
         request.setAttribute("description", selectedDescription);
         request.setAttribute("status", selectedStatus);
-        request.setAttribute("messages", messages);
+        request.setAttribute("replies", replies);
 
+        // Updated to forward to the correct JSP page
         RequestDispatcher dispatcher = request.getRequestDispatcher("ticketmanagement.jsp");
         dispatcher.forward(request, response);
     }

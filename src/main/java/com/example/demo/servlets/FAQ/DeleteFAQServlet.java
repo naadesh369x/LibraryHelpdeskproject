@@ -1,6 +1,5 @@
 package com.example.demo.servlets.FAQ;
 
-
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,17 +16,24 @@ public class DeleteFAQServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
+       
+        int faqId = Integer.parseInt(request.getParameter("faqid"));
 
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement("DELETE FROM faq WHERE id=?")) {
+             PreparedStatement ps = con.prepareStatement("DELETE FROM faq WHERE faqid=?")) {
 
-            ps.setInt(1, id);
+            ps.setInt(1, faqId);
             ps.executeUpdate();
+
+            // Set success message
+            request.getSession().setAttribute("success", "FAQ deleted successfully!");
             response.sendRedirect("listFAQAdmin.jsp");
+
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("Error deleting FAQ: " + e.getMessage());
+            // Set error message
+            request.getSession().setAttribute("error", "Error deleting FAQ: " + e.getMessage());
+            response.sendRedirect("listFAQAdmin.jsp");
         }
     }
 }

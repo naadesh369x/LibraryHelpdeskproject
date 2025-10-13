@@ -35,7 +35,7 @@ public class AdminRegisterServlet extends HttpServlet {
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='admins' AND xtype='U')
                 CREATE TABLE admins (
-                    id INT IDENTITY(1,1) PRIMARY KEY,
+                    adminid INT IDENTITY(1,1) PRIMARY KEY,
                     firstname NVARCHAR(50) NOT NULL,
                     lastname NVARCHAR(50) NOT NULL,
                     email NVARCHAR(100) NOT NULL UNIQUE,

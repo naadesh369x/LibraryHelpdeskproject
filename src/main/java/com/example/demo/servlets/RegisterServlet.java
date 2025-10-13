@@ -54,7 +54,7 @@ public class RegisterServlet extends HttpServlet {
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Members' AND xtype='U')
                 CREATE TABLE Members (
-                    id INT IDENTITY(2,2) PRIMARY KEY,  -- start at 2, increment by 2
+                    userid INT IDENTITY(2,2) PRIMARY KEY,  -- start at 2, increment by 2
                     firstName NVARCHAR(50) NOT NULL,
                     lastName NVARCHAR(50) NOT NULL,
                     email NVARCHAR(100) NOT NULL UNIQUE,

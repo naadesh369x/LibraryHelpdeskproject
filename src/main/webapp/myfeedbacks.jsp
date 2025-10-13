@@ -18,7 +18,7 @@
             try(ResultSet rs = ps.executeQuery()){
                 while(rs.next()){
                     Map<String,String> fb = new HashMap<>();
-                    fb.put("id", String.valueOf(rs.getInt("id")));
+                    fb.put("faqid", String.valueOf(rs.getInt("faqid")));
                     fb.put("firstname", rs.getString("firstname"));
                     fb.put("lastname", rs.getString("lastname"));
                     fb.put("comment", rs.getString("comment"));
@@ -41,189 +41,119 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Bubble background */
+        /* Full-page background image */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
-            overflow-x: hidden;
+            background: url('https://images.unsplash.com/photo-1581091215362-3441b23dcfc2?auto=format&fit=crop&w=1740&q=80') no-repeat center center fixed;
+            background-size: cover;
             position: relative;
+            color: #fff;
         }
-
         body::before {
             content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 0;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            z-index: -1;
         }
 
+        /* Top Bar */
         .top-bar {
             width: 100%;
             height: 64px;
-            background: rgba(44,62,80,0.92);
+            background: rgba(44,62,80,0.9);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 18px rgba(44,62,80,0.18);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.25);
             padding: 0 32px;
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 100; /* ensure top bar is above everything */
         }
-
         .top-bar .logo {
             display: flex;
             align-items: center;
             font-size: 1.4rem;
             font-weight: bold;
-            letter-spacing: 1px;
         }
-
         .top-bar .logo i {
             margin-right: 10px;
+            color: #ffda6a;
             font-size: 2rem;
-            color: #6c63ff;
         }
-
-        .top-bar .nav {
-            display: flex;
-            gap: 24px;
-        }
-
         .top-bar .nav a {
             color: #fff;
-            font-size: 1.1rem;
             text-decoration: none;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
-            transition: background 0.2s;
-            display: flex;
+            transition: 0.2s;
+            display: inline-flex;
             align-items: center;
-            gap: 7px;
+            gap: 6px;
+            font-weight: 500;
+            background: rgba(0,0,0,0.3); /* semi-transparent bg for visibility */
         }
-
         .top-bar .nav a:hover {
             background: #6c63ff;
             color: #fff;
         }
 
-        .top-bar .logout-btn {
-            background: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            text-decoration: none;
+        /* Logout button */
+        .logout-btn {
+            background: linear-gradient(90deg, #e74c3c, #ff7f7f);
+            color: #fff; border-radius: 8px; padding: 8px 16px; font-weight: 500;
+            text-decoration: none; display: flex; align-items: center; gap: 6px;
         }
+        .logout-btn:hover { background: #c0392b; }
 
-        .top-bar .logout-btn:hover {
-            background: #c0392b;
-        }
+        /* Container */
+        .container { max-width: 1200px; margin: 40px auto; position: relative; z-index: 1; }
 
-        .container {
-            position: relative;
-            z-index: 1;
-            margin-top: 40px;
-        }
+        h2 { text-align: center; margin-bottom: 30px; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
 
-        h2 {
-            text-align: center;
-            color: #23272f;
-            margin-bottom: 30px;
-        }
-
-        .btn-top {
-            margin-bottom: 20px;
-        }
-
-        .feedback-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(44,62,80,0.13), 0 1.5px 8px rgba(44,62,80,0.09);
-            padding: 28px 28px 20px 28px;
-            margin-bottom: 24px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #e6e6e6;
-        }
-
-        .feedback-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 16px 40px rgba(44,62,80,0.18), 0 2px 12px rgba(44,62,80,0.13);
-        }
-
-        .feedback-header {
-            font-weight: 700;
-            color: #6c63ff;
-            margin-bottom: 10px;
-            font-size: 1.15rem;
-        }
-
-        .btn-edit {
-            background: linear-gradient(90deg, #6c63ff 60%, #74ebd5 100%);
-            color: #fff;
-            border-radius: 8px;
-            margin-right: 5px;
-            border: none;
-            padding: 8px 18px;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
-        }
-
-        .btn-edit:hover { background: #5548d3; }
-
-        .btn-delete {
-            background: linear-gradient(90deg, #e74c3c 60%, #ffb6b6 100%);
-            color: #fff;
-            border-radius: 8px;
-            border: none;
-            padding: 8px 18px;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
-        }
-
-        .btn-delete:hover { background: #bb2d3b; }
-
-        .form-control, .form-select {
-            border-radius: 8px;
-        }
-
-        .top-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        @media(max-width:768px) {
-            .top-buttons { flex-direction: column; gap: 10px; }
-        }
-
+        /* Feedback cards */
         .feedbacks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 24px;
         }
+        .feedback-card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .feedback-card:hover { transform: translateY(-6px) scale(1.02); }
+
+        .feedback-header { font-weight: 700; color: #ffda6a; margin-bottom: 10px; font-size: 1.1rem; display:flex; justify-content:space-between; align-items:center; }
+        .feedback-comment { font-size: 0.95rem; margin-bottom: 10px; }
+        .feedback-date { font-size: 0.85rem; color: #ddd; margin-bottom: 12px; }
+
+        /* Buttons */
+        .btn-edit { background: linear-gradient(90deg,#6c63ff,#74ebd5); color:#fff; border:none; padding:8px 16px; border-radius:8px; margin-right:5px; }
+        .btn-edit:hover { background:#5548d3; }
+        .btn-delete { background: linear-gradient(90deg,#e74c3c,#ff7f7f); color:#fff; border:none; padding:8px 16px; border-radius:8px; }
+        .btn-delete:hover { background:#bb2d3b; }
+        .form-control, .form-select { border-radius:8px; }
+
+        /* Edit form */
+        .edit-form { display:none; margin-top:10px; }
+
+        @media(max-width:768px){ .feedbacks-grid{gap:16px;} }
     </style>
 </head>
 <body>
-
-<!-- Modern Top Bar -->
 <div class="top-bar">
-    <div class="logo">
-        <i class="fas fa-star"></i> My Feedbacks
-    </div>
+    <div class="logo"><i class="fas fa-star"></i> My Feedbacks</div>
     <div class="nav">
         <a href="dashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
         <a href="addfeedback.jsp"><i class="fas fa-plus"></i> Add Feedback</a>
@@ -232,7 +162,6 @@
 </div>
 
 <div class="container">
-
     <h2>My Feedbacks</h2>
 
     <% if(successMsg != null){ %>
@@ -242,58 +171,55 @@
     <div class="alert alert-danger"><%= errorMsg %></div>
     <% } %>
 
-    <div class="feedbacks-grid" id="feedbacksGrid">
+    <div class="feedbacks-grid">
         <% if(feedbacks != null && !feedbacks.isEmpty()){
             int idx = 0;
             for(Map<String,String> fb : feedbacks){ %>
-        <div class="feedback-card" style="max-width:100%; margin:0; padding:18px 18px 14px 18px;" id="card-<%= idx %>">
-            <div class="feedback-header" style="font-size:1rem;">
-                <%= fb.get("firstname") %> <%= fb.get("lastname") %> | Rating: <span id="rating-<%= idx %>"><%= fb.get("rating") %></span>/5
-                <button type="button" class="btn" style="background:none; border:none; float:right;" onclick="toggleEdit(<%= idx %>)">
-                    <i class="fas fa-pencil-alt"></i>
-                </button>
+        <div class="feedback-card">
+            <div class="feedback-header">
+                <span><%= fb.get("firstname") %> <%= fb.get("lastname") %></span>
+                <span>
+                    <% int rating = Integer.parseInt(fb.get("rating"));
+                        for(int i=1;i<=5;i++){ %>
+                        <% if(i<=rating){ %><i class="fas fa-star" style="color:#f1c40f;"></i><% }
+                else { %><i class="far fa-star" style="color:#f1c40f;"></i><% } %>
+                    <% } %>
+                </span>
             </div>
-            <div class="mb-2" style="font-size:0.97rem;" id="comment-<%= idx %>"><strong>Comment:</strong> <%= fb.get("comment") %></div>
-            <div class="text-muted mb-3" style="font-size:0.85rem;">Submitted on: <%= fb.get("created_at") %></div>
-            <form action="EditFeedbackServlet" method="post" class="mb-2" id="edit-form-<%= idx %>" style="display:none;">
-                <input type="hidden" name="id" value="<%= fb.get("id") %>">
+            <div class="feedback-comment"><strong>Comment:</strong> <%= fb.get("comment") %></div>
+            <div class="feedback-date">Submitted on: <%= fb.get("created_at") %></div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-edit" onclick="toggleEdit(<%= idx %>)">Edit</button>
+                <form action="DeleteFeedbackServlet" method="post" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="faqid" value="<%= fb.get("faqid") %>">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </div>
+
+            <form action="EditFeedbackServlet" method="post" class="edit-form" id="edit-<%= idx %>">
+                <input type="hidden" name="faqid" value="<%= fb.get("faqid") %>">
                 <textarea name="comment" class="form-control mb-2" rows="2"><%= fb.get("comment") %></textarea>
                 <input type="number" name="rating" value="<%= fb.get("rating") %>" min="1" max="5" class="form-control mb-2" required>
                 <button type="submit" class="btn btn-edit">Update</button>
                 <button type="button" class="btn btn-secondary" onclick="toggleEdit(<%= idx %>)">Cancel</button>
             </form>
-            <form action="DeleteFeedbackServlet" method="post" onsubmit="return confirm('Are you sure you want to delete this feedback?');">
-                <input type="hidden" name="id" value="<%= fb.get("id") %>">
-                <button type="submit" class="btn btn-delete">Delete</button>
-            </form>
         </div>
         <% idx++; }} else { %>
-        <div class="feedback-card" style="max-width:100%; margin:0; padding:18px 18px 14px 18px;">
-            <div class="feedback-header" style="font-size:1rem;">
-                Default User | Rating: 5/5
-            </div>
-            <div class="mb-2" style="font-size:0.97rem;"><strong>Comment:</strong> This is a default feedback. Share your experience with us!</div>
-            <div class="text-muted mb-3" style="font-size:0.85rem;">Submitted on: -</div>
+        <div class="feedback-card">
+            <div class="feedback-header">No Feedbacks Yet</div>
+            <div class="feedback-comment">You haven't submitted any feedback. Add one above!</div>
         </div>
         <% } %>
     </div>
-
 </div>
+
 <script>
-function toggleEdit(idx) {
-    var form = document.getElementById('edit-form-' + idx);
-    var comment = document.getElementById('comment-' + idx);
-    var rating = document.getElementById('rating-' + idx);
-    if(form.style.display === 'none') {
-        form.style.display = '';
-        if(comment) comment.style.display = 'none';
-        if(rating) rating.parentElement.style.display = 'none';
-    } else {
-        form.style.display = 'none';
-        if(comment) comment.style.display = '';
-        if(rating) rating.parentElement.style.display = '';
+    function toggleEdit(idx){
+        const form = document.getElementById('edit-' + idx);
+        form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
     }
-}
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
 </body>
 </html>

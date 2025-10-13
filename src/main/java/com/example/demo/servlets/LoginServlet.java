@@ -32,7 +32,7 @@ public class LoginServlet extends HttpServlet {
                     if (rs.next()) {
                         // User found
                         HttpSession session = request.getSession();
-                        session.setAttribute("userId", rs.getInt("id"));
+                        session.setAttribute("userId", rs.getInt("userid"));
                         session.setAttribute("firstName", rs.getString("firstname"));
                         session.setAttribute("email", rs.getString("email"));
 

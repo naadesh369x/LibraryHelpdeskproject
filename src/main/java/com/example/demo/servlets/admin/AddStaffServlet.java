@@ -56,7 +56,7 @@ public class AddStaffServlet extends HttpServlet {
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Staff' AND xtype='U')
                 CREATE TABLE Staff (
-                    id INT IDENTITY(1,2) PRIMARY KEY, -- Start at 1, increment by 2
+                    staffid INT IDENTITY(1,2) PRIMARY KEY, -- Start at 1, increment by 2
                     firstName NVARCHAR(50),
                     lastName NVARCHAR(50),
                     email NVARCHAR(100),

@@ -20,6 +20,7 @@ public class ViewRequestServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         String userEmail = (session != null) ? (String) session.getAttribute("email") : null;
+        Integer userId = (session != null) ? (Integer) session.getAttribute("userId") : null;
 
         if (userEmail == null) {
             response.sendRedirect("login.jsp?error=Please+login+first");
@@ -31,29 +32,54 @@ public class ViewRequestServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
             // Ensure ResourceRequest table has all required columns
             String createTableSQL = """
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ResourceRequest' AND xtype='U')
-                CREATE TABLE ResourceRequest (
-                    id INT IDENTITY(1,1) PRIMARY KEY,
-                    email VARCHAR(150) NOT NULL,
-                    title VARCHAR(255) NOT NULL,
-                    author VARCHAR(255) NOT NULL,
-                    type VARCHAR(100) NOT NULL,
-                    justification NVARCHAR(MAX),
-                    status VARCHAR(50) DEFAULT 'Pending',
-                    created_at DATETIME DEFAULT GETDATE()
-                )
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'ResourceRequest')
+                BEGIN
+                    CREATE TABLE ResourceRequest (
+                        requestid INT IDENTITY(1,1) PRIMARY KEY,
+                        email NVARCHAR(255) NOT NULL,
+                        title NVARCHAR(255) NOT NULL,
+                        author NVARCHAR(255) NOT NULL,
+                        type NVARCHAR(100) NOT NULL,
+                        justification NVARCHAR(MAX),
+                        status NVARCHAR(50) DEFAULT 'Pending',
+                        user_id INT,
+                        created_at DATETIME DEFAULT GETDATE(),
+                        CONSTRAINT FK_ResourceRequest_User FOREIGN KEY (user_id) REFERENCES members(userid)
+                    )
+                END
+                ELSE
+                BEGIN
+                    -- Add missing columns if they don't exist
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ResourceRequest' AND COLUMN_NAME = 'user_id')
+                    BEGIN
+                        ALTER TABLE ResourceRequest ADD user_id INT
+                        ALTER TABLE ResourceRequest ADD CONSTRAINT FK_ResourceRequest_User FOREIGN KEY (user_id) REFERENCES members(userid)
+                    END
+                END
             """;
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
             }
-            
-            String sql = "SELECT * FROM ResourceRequest WHERE email=? ORDER BY created_at DESC";
+
+            // Query to get resource requests - prioritize by user_id if available, otherwise by email
+            String sql;
+            if (userId != null) {
+                sql = "SELECT * FROM ResourceRequest WHERE user_id=? ORDER BY created_at DESC";
+            } else {
+                sql = "SELECT * FROM ResourceRequest WHERE email=? ORDER BY created_at DESC";
+            }
+
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setString(1, userEmail);
+                if (userId != null) {
+                    ps.setInt(1, userId);
+                } else {
+                    ps.setString(1, userEmail);
+                }
+
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         Map<String, String> reqData = new HashMap<>();
-                        reqData.put("id", String.valueOf(rs.getInt("id")));
+                        reqData.put("requestid", String.valueOf(rs.getInt("requestid")));
                         reqData.put("email", rs.getString("email"));
                         reqData.put("title", rs.getString("title"));
                         reqData.put("author", rs.getString("author"));
@@ -68,9 +94,10 @@ public class ViewRequestServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("errorMessage", "Error retrieving resource requests: " + e.getMessage());
         }
 
-        //  Pass data to JSP
+        // Pass data to JSP
         request.setAttribute("requestList", requestList);
         request.getRequestDispatcher("viewRequests.jsp").forward(request, response);
     }

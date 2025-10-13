@@ -1,7 +1,5 @@
 package com.example.demo.servlets.admin;
 
-
-
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,9 +8,13 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet("/AdminRequestsServlet")
 public class AdminRequestsServlet extends HttpServlet {
+
+    private static final Logger logger = Logger.getLogger(AdminRequestsServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -21,70 +23,60 @@ public class AdminRequestsServlet extends HttpServlet {
         List<Map<String, String>> requestsList = new ArrayList<>();
         int totalCount = 0, pendingCount = 0, approvedCount = 0, rejectedCount = 0;
 
-        try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement()) {
+        try (Connection conn = DBConnection.getConnection()) {
 
-            
-
-            String createTableSQL = """
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ResourceRequest' AND xtype='U')
-                CREATE TABLE ResourceRequest (
-                    id INT IDENTITY(1,1) PRIMARY KEY,
-                    title NVARCHAR(255) NOT NULL,
-                    author NVARCHAR(255),
-                    type NVARCHAR(100),
-                    justification NVARCHAR(MAX),
-                    status NVARCHAR(50) DEFAULT 'Pending',
-                    created_at DATETIME DEFAULT GETDATE()
-                )
+            // ✅ Fetch all requests (assuming ResourceRequest table already exists)
+            String fetchSQL = """
+                SELECT r.requestid, r.title, r.author, r.type, r.justification, r.email, 
+                       r.status, r.created_at, m.firstName, m.lastName
+                FROM ResourceRequest r
+                LEFT JOIN members m ON r.user_id = m.userid
+                ORDER BY r.created_at DESC
             """;
-            stmt.executeUpdate(createTableSQL);
 
-
-            String countQuery = "SELECT status, COUNT(*) as cnt FROM ResourceRequest GROUP BY status";
-            try (PreparedStatement ps = conn.prepareStatement(countQuery);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String status = rs.getString("status");
-                    int cnt = rs.getInt("cnt");
-                    switch (status.toLowerCase()) {
-                        case "pending" -> pendingCount = cnt;
-                        case "approved" -> approvedCount = cnt;
-                        case "rejected" -> rejectedCount = cnt;
-                    }
-                    totalCount += cnt;
-                }
-            }
-
-
-            String fetchSQL = "SELECT id, title, author, type, justification, status FROM ResourceRequest ORDER BY created_at DESC";
             try (PreparedStatement ps = conn.prepareStatement(fetchSQL);
                  ResultSet rs = ps.executeQuery()) {
+
                 while (rs.next()) {
                     Map<String, String> row = new HashMap<>();
-                    row.put("id", String.valueOf(rs.getInt("id")));
+                    String status = rs.getString("status");
+                    String normalizedStatus = (status != null ? status.toLowerCase() : "unknown");
+
+                    row.put("requestid", String.valueOf(rs.getInt("requestid")));
                     row.put("title", rs.getString("title"));
                     row.put("author", rs.getString("author"));
                     row.put("type", rs.getString("type"));
                     row.put("justification", rs.getString("justification"));
-                    row.put("status", rs.getString("status"));
+                    row.put("email", rs.getString("email"));
+                    row.put("status", status);
+                    row.put("created_at", rs.getString("created_at"));
+                    row.put("firstName", rs.getString("firstName"));
+                    row.put("lastName", rs.getString("lastName"));
+
                     requestsList.add(row);
+
+                    totalCount++;
+                    switch (normalizedStatus) {
+                        case "pending" -> pendingCount++;
+                        case "approved" -> approvedCount++;
+                        case "rejected" -> rejectedCount++;
+                    }
                 }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Database error: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error fetching requests", e);
+            request.setAttribute("error", "Error loading data: " + e.getMessage());
         }
 
-
+        // ✅ Pass data to JSP
         request.setAttribute("requests", requestsList);
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("pendingCount", pendingCount);
         request.setAttribute("approvedCount", approvedCount);
         request.setAttribute("rejectedCount", rejectedCount);
 
-        // Forward to JSP
+        // ✅ Forward to JSP
         request.getRequestDispatcher("updaterequests.jsp").forward(request, response);
     }
 }

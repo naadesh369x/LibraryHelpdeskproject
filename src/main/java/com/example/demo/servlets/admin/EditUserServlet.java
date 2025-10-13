@@ -17,7 +17,7 @@ import java.util.Map;
 @WebServlet("/EditUserServlet")
 public class EditUserServlet extends HttpServlet {
 
-    // Load user data
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,10 +28,13 @@ public class EditUserServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
+
             if ("Member".equalsIgnoreCase(userType)) {
-                sql = "SELECT id, firstName, lastName, email, role, phoneNumber, password FROM Members WHERE id = ?";
-            } else {
-                sql = "SELECT id, firstName, lastName, email, role, phoneNumber, password FROM Staff WHERE id = ?";
+
+                sql = "SELECT userid, firstName, lastName, email, role, phoneNumber, password FROM Members WHERE userid = ?";
+            } else { // Staff
+
+                sql = "SELECT staffid, firstName, lastName, email, role, phoneNumber, password FROM Staff WHERE staffid = ?";
                 userType = "Staff";
             }
 
@@ -40,7 +43,14 @@ public class EditUserServlet extends HttpServlet {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         user = new HashMap<>();
-                        user.put("id", String.valueOf(rs.getInt("id")));
+
+                        if ("Staff".equalsIgnoreCase(userType)) {
+
+                            user.put("staffid", String.valueOf(rs.getInt("staffid")));
+                        } else {
+
+                            user.put("userid", String.valueOf(rs.getInt("userid")));
+                        }
                         user.put("firstName", rs.getString("firstName"));
                         user.put("lastName", rs.getString("lastName"));
                         user.put("email", rs.getString("email"));
@@ -60,31 +70,35 @@ public class EditUserServlet extends HttpServlet {
         request.getRequestDispatcher("editusers.jsp").forward(request, response);
     }
 
-    // Update user data
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String id = request.getParameter("id");
         String userType = request.getParameter("userType");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phone");
         String newPassword = request.getParameter("password");
 
+
+        String idParam = ("Staff".equalsIgnoreCase(userType)) ? request.getParameter("staffid") : request.getParameter("userid");
+
         try (Connection conn = DBConnection.getConnection()) {
             String sql;
             boolean updatePassword = newPassword != null && !newPassword.trim().isEmpty();
-//validation
+
+
             if ("Member".equalsIgnoreCase(userType)) {
+
                 sql = updatePassword ?
-                        "UPDATE Members SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE id=?" :
-                        "UPDATE Members SET firstName=?, lastName=?, phoneNumber=? WHERE id=?";
-            } else {
+                        "UPDATE Members SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE userid=?" :
+                        "UPDATE Members SET firstName=?, lastName=?, phoneNumber=? WHERE userid=?";
+            } else { // Staff
+
                 sql = updatePassword ?
-                        "UPDATE Staff SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE id=?" :
-                        "UPDATE Staff SET firstName=?, lastName=?, phoneNumber=? WHERE id=?";
-                userType = "Staff";
+                        "UPDATE Staff SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE staffid=?" :
+                        "UPDATE Staff SET firstName=?, lastName=?, phoneNumber=? WHERE staffid=?";
             }
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -94,9 +108,9 @@ public class EditUserServlet extends HttpServlet {
 
                 if (updatePassword) {
                     ps.setString(4, newPassword);
-                    ps.setInt(5, Integer.parseInt(id));
+                    ps.setInt(5, Integer.parseInt(idParam));
                 } else {
-                    ps.setInt(4, Integer.parseInt(id));
+                    ps.setInt(4, Integer.parseInt(idParam));
                 }
 
                 ps.executeUpdate();
@@ -105,11 +119,12 @@ public class EditUserServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Error updating user: " + e.getMessage());
+
             request.getRequestDispatcher("editusers.jsp").forward(request, response);
             return;
         }
 
-        // Redirect back to management page
+        // redirect back to the user management page
         response.sendRedirect("manage-users?success=UserUpdated");
     }
 }

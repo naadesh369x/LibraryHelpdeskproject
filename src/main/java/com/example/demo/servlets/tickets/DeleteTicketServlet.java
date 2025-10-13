@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 @WebServlet("/DeleteTicketServlet")
 public class DeleteTicketServlet extends HttpServlet {
@@ -33,16 +34,33 @@ public class DeleteTicketServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
+            // First get the userId from the email
+            int userId = 0;
+            String getUserSql = "SELECT userId FROM members WHERE email = ?";
+            try (PreparedStatement getUserStmt = conn.prepareStatement(getUserSql)) {
+                getUserStmt.setString(1, email);
+                try (ResultSet rs = getUserStmt.executeQuery()) {
+                    if (rs.next()) {
+                        userId = rs.getInt("userId");
+                    } else {
+                        response.sendRedirect("myTickets.jsp?error=User+not+found");
+                        return;
+                    }
+                }
+            }
+
             // Delete only if ticket belongs to the logged-in user
-            String sql = "DELETE FROM tickets WHERE id = ? AND email = ?";
+            String sql = "DELETE FROM tickets WHERE ticketId = ? AND userId = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, Integer.parseInt(ticketId));
-                stmt.setString(2, email);
+                stmt.setInt(2, userId);
 
                 int rowsDeleted = stmt.executeUpdate();
 
                 if (rowsDeleted > 0) {
-                    response.sendRedirect("myTickets.jsp?success=Ticket+deleted+successfully");
+                    // Set success message in session
+                    session.setAttribute("ticketSuccess", "Ticket deleted successfully!");
+                    response.sendRedirect("myTickets.jsp");
                 } else {
                     response.sendRedirect("myTickets.jsp?error=Ticket+not+found+or+not+owned+by+you");
                 }

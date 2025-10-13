@@ -27,22 +27,27 @@ public class DeleteFeedbackServlet extends HttpServlet {
             return;
         }
 
-        String idStr = request.getParameter("id");
 
-        if (idStr != null && !idStr.isEmpty()) {
+        String faqidStr = request.getParameter("faqid");
+
+        if (faqidStr != null && !faqidStr.isEmpty()) {
             try (Connection conn = DBConnection.getConnection()) {
-                // Delete only feedback for the current logged-in user
-                String sql = "DELETE FROM feedbacks WHERE id = ? AND email = ?";
+
+
+                String sql = "DELETE FROM feedbacks WHERE faqid = ? AND email = ?";
+
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setInt(1, Integer.parseInt(idStr));
+                    ps.setInt(1, Integer.parseInt(faqidStr));
                     ps.setString(2, email);
+
                     int rowsDeleted = ps.executeUpdate();
 
                     if (rowsDeleted == 0) {
-                        // No row deleted: either wrong id or not your feedback
-                        System.out.println("No feedback deleted. Either invalid ID or not your feedback.");
+                        // No row deleted: either invalid ID or user mismatch
+                        System.out.println("No feedback deleted. Either invalid FAQ ID or not your feedback.");
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

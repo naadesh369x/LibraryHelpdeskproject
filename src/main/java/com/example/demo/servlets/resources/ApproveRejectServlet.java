@@ -1,7 +1,5 @@
 package com.example.demo.servlets.resources;
 
-//update Resource
-
 import com.example.demo.utils.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,7 +8,6 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 @WebServlet("/ApproveRejectServlet")
 public class ApproveRejectServlet extends HttpServlet {
@@ -19,10 +16,11 @@ public class ApproveRejectServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String idStr = request.getParameter("id");
+        String requestIdStr = request.getParameter("requestid");
         String action = request.getParameter("action");
         String newStatus = null;
-//validaion
+
+        // Determine new status based on action
         if ("approve".equalsIgnoreCase(action)) {
             newStatus = "Approved";
         } else if ("reject".equalsIgnoreCase(action)) {
@@ -31,20 +29,19 @@ public class ApproveRejectServlet extends HttpServlet {
             newStatus = "Pending";
         }
 
-        if (idStr != null && newStatus != null) {
+        // Update the request status if parameters are valid
+        if (requestIdStr != null && newStatus != null) {
             try (Connection conn = DBConnection.getConnection()) {
-                String updateSQL = "UPDATE ResourceRequest SET status=? WHERE id=?";
+                String updateSQL = "UPDATE ResourceRequest SET status=? WHERE requestid=?";
                 try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
                     ps.setString(1, newStatus);
-                    ps.setInt(2, Integer.parseInt(idStr));
+                    ps.setInt(2, Integer.parseInt(requestIdStr));
                     ps.executeUpdate();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                request.setAttribute("error", "Database error: " + e.getMessage());
             }
         }
-
 
         response.sendRedirect("AdminRequestsServlet");
     }

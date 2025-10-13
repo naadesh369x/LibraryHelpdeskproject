@@ -15,11 +15,17 @@ public class ReplyTicketServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String ticketId = request.getParameter("ticketId");
-        String reply = request.getParameter("reply");
+        String message = request.getParameter("message"); // Changed from "reply" to "message" to match form
+
+        if (ticketId == null || ticketId.isEmpty() || message == null || message.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Missing required fields");
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            //  Create ticket_replies table
+            // Create ticket_replies table if it doesn't exist
             String createRepliesTable =
                     "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ticket_replies' AND xtype='U') " +
                             "BEGIN " +
@@ -30,7 +36,7 @@ public class ReplyTicketServlet extends HttpServlet {
                             "description NVARCHAR(MAX) NULL, " +
                             "message NVARCHAR(MAX) NOT NULL, " +
                             "created_at DATETIME DEFAULT GETDATE(), " +
-                            "FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE" +
+                            "FOREIGN KEY (ticket_id) REFERENCES tickets(ticketId) ON DELETE CASCADE" +
                             ") " +
                             "END";
 
@@ -38,9 +44,9 @@ public class ReplyTicketServlet extends HttpServlet {
                 stmt.executeUpdate(createRepliesTable);
             }
 
-            //  Get original ticket description
+            // Get original ticket description
             String ticketDescription = "";
-            String getDescSql = "SELECT description FROM tickets WHERE id=?";
+            String getDescSql = "SELECT description FROM tickets WHERE ticketId=?";
             try (PreparedStatement ps = conn.prepareStatement(getDescSql)) {
                 ps.setInt(1, Integer.parseInt(ticketId));
                 try (ResultSet rs = ps.executeQuery()) {
@@ -50,30 +56,30 @@ public class ReplyTicketServlet extends HttpServlet {
                 }
             }
 
-            //  Insert admin reply
+            // Insert admin reply
             String insertReplySql = "INSERT INTO ticket_replies(ticket_id, sender, description, message) VALUES (?, 'admin', ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insertReplySql)) {
                 ps.setInt(1, Integer.parseInt(ticketId));
                 ps.setString(2, ticketDescription);
-                ps.setString(3, reply);
+                ps.setString(3, message);
                 ps.executeUpdate();
             }
 
-            //  Update ticket status to Solved
-            String updateTicketSql = "UPDATE tickets SET status='Solved' WHERE id=?";
+            // Update ticket status to Solved
+            String updateTicketSql = "UPDATE tickets SET status='Solved' WHERE ticketId=?";
             try (PreparedStatement ps = conn.prepareStatement(updateTicketSql)) {
                 ps.setInt(1, Integer.parseInt(ticketId));
                 ps.executeUpdate();
             }
 
-            //  Get full ticket details
+            // Get full ticket details
             Map<String, Object> ticketDetails = new HashMap<>();
-            String ticketSql = "SELECT id, username, category, description, email, status, created_at FROM tickets WHERE id=?";
+            String ticketSql = "SELECT ticketId, username, category, description, email, status, created_at FROM tickets WHERE ticketId=?";
             try (PreparedStatement psTicket = conn.prepareStatement(ticketSql)) {
                 psTicket.setInt(1, Integer.parseInt(ticketId));
                 try (ResultSet rs = psTicket.executeQuery()) {
                     if (rs.next()) {
-                        ticketDetails.put("id", rs.getString("id"));
+                        ticketDetails.put("id", rs.getString("ticketId"));
                         ticketDetails.put("username", rs.getString("username"));
                         ticketDetails.put("category", rs.getString("category"));
                         ticketDetails.put("description", rs.getString("description"));
@@ -84,7 +90,7 @@ public class ReplyTicketServlet extends HttpServlet {
                 }
             }
 
-            //  Get all replies with description
+            // Get all replies with description
             List<Map<String, String>> replies = new ArrayList<>();
             String replySql = "SELECT sender, description, message, created_at FROM ticket_replies WHERE ticket_id=? ORDER BY created_at ASC";
             try (PreparedStatement psReply = conn.prepareStatement(replySql)) {
@@ -103,9 +109,12 @@ public class ReplyTicketServlet extends HttpServlet {
 
             ticketDetails.put("replies", replies);
 
+            // Set success message in session
+            HttpSession session = request.getSession();
+            session.setAttribute("ticketSuccess", "Reply sent successfully! Ticket marked as solved.");
 
-            request.setAttribute("ticket", ticketDetails);
-            request.getRequestDispatcher("sucess.jsp").forward(request, response);
+            // Redirect back to admin tickets page
+            response.sendRedirect("ManageTicketsServlet");
 
         } catch (Exception e) {
             e.printStackTrace();

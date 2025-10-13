@@ -22,22 +22,21 @@ public class UpdateProfileServlet extends HttpServlet {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String phone = request.getParameter("phoneNumber");
-        String password = request.getParameter("password");
 
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "UPDATE members SET firstName=?, lastName=?, phoneNumber=?, password=? WHERE email=?";
+            // Only update personal details, not password
+            String sql = "UPDATE members SET firstName=?, lastName=?, phoneNumber=? WHERE email=?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, firstName);
                 ps.setString(2, lastName);
                 ps.setString(3, phone);
-                ps.setString(4, password);
-                ps.setString(5, email);
+                ps.setString(4, email);
                 ps.executeUpdate();
             }
-            response.sendRedirect("profile.jsp?success=1");
+            response.sendRedirect("profile.jsp?success=details");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("profile.jsp?error=1");
+            response.sendRedirect("profile.jsp?error=details");
         }
     }
 }
