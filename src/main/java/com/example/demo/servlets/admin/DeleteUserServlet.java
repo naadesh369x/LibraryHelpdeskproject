@@ -29,9 +29,9 @@ public class DeleteUserServlet extends HttpServlet {
             String sql;
 
             if ("Member".equalsIgnoreCase(userType)) {
-                sql = "DELETE FROM Members WHERE userid = ?"; // updated column name
+                sql = "DELETE FROM Members WHERE userid = ?";
             } else if ("Staff".equalsIgnoreCase(userType)) {
-                sql = "DELETE FROM Staff WHERE staffid = ?"; // updated column name
+                sql = "DELETE FROM Staff WHERE staffid = ?";
             } else {
                 response.sendRedirect("manage-users?error=InvalidUserType");
                 return;

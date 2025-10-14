@@ -43,7 +43,7 @@ public class DeleteFeedbackServlet extends HttpServlet {
                     int rowsDeleted = ps.executeUpdate();
 
                     if (rowsDeleted == 0) {
-                        // No row deleted: either invalid ID or user mismatch
+                        // ither invalid ID or user mismatch
                         System.out.println("No feedback deleted. Either invalid FAQ ID or not your feedback.");
                     }
                 }

@@ -40,26 +40,26 @@ public class RequestResourceServlet extends HttpServlet {
             return;
         }
 
-        // Get user ID from session or hidden field
+        // Get user ID from session
         HttpSession session = request.getSession(false);
         Integer userId = null;
 
-        // First try to get from hidden field
+
         String userIdParam = request.getParameter("userId");
         if (userIdParam != null && !userIdParam.isEmpty()) {
             try {
                 userId = Integer.parseInt(userIdParam);
             } catch (NumberFormatException e) {
-                // Invalid user ID format
+
             }
         }
 
-        // If not found, try to get from session
+
         if (userId == null && session != null && session.getAttribute("userId") != null) {
             userId = (Integer) session.getAttribute("userId");
         }
 
-        // If we still don't have a user ID, redirect to error
+
         if (userId == null) {
             session.setAttribute("errorMessage", "User not found. Please log in again.");
             response.sendRedirect("login.jsp");
@@ -69,7 +69,6 @@ public class RequestResourceServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
             // Create table if it doesn't exist
             createResourceRequestTable(conn);
-
             // Insert the resource request
             String insertSQL = """
                 INSERT INTO ResourceRequest (title, author, type, justification, email, user_id, status, created_at)

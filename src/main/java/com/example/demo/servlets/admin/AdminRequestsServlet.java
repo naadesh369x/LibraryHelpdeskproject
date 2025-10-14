@@ -25,7 +25,7 @@ public class AdminRequestsServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            // ✅ Fetch all requests (assuming ResourceRequest table already exists)
+
             String fetchSQL = """
                 SELECT r.requestid, r.title, r.author, r.type, r.justification, r.email, 
                        r.status, r.created_at, m.firstName, m.lastName
@@ -69,14 +69,14 @@ public class AdminRequestsServlet extends HttpServlet {
             request.setAttribute("error", "Error loading data: " + e.getMessage());
         }
 
-        // ✅ Pass data to JSP
+        //  Pass data to JSP
         request.setAttribute("requests", requestsList);
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("pendingCount", pendingCount);
         request.setAttribute("approvedCount", approvedCount);
         request.setAttribute("rejectedCount", rejectedCount);
 
-        // ✅ Forward to JSP
+        //  Forward to JSP
         request.getRequestDispatcher("updaterequests.jsp").forward(request, response);
     }
 }

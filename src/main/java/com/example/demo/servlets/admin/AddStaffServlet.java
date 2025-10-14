@@ -52,7 +52,6 @@ public class AddStaffServlet extends HttpServlet {
                 return;
             }
 
-            //  Create Staff table if it doesn't exist
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Staff' AND xtype='U')
                 CREATE TABLE Staff (

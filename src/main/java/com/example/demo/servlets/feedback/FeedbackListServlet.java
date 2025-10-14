@@ -25,7 +25,7 @@ public class FeedbackListServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            // ✅ Ensure 'feedbacks' table exists with faqid
+            //Ensure 'feedbacks' table exists with faqid
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='feedbacks' AND xtype='U')
                 CREATE TABLE feedbacks (
@@ -43,7 +43,7 @@ public class FeedbackListServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // ✅ Select all feedbacks
+            // Select all feedbacks
             String selectSQL = "SELECT * FROM feedbacks ORDER BY created_at DESC";
             try (PreparedStatement ps = conn.prepareStatement(selectSQL);
                  ResultSet rs = ps.executeQuery()) {
@@ -65,7 +65,7 @@ public class FeedbackListServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        // ✅ Pass data to JSP
+        // Pass data to JSP
         request.setAttribute("feedbackList", feedbackList);
         request.getRequestDispatcher("userallfeedbacks.jsp").forward(request, response);
     }

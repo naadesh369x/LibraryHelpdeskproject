@@ -20,7 +20,7 @@ public class ApproveRejectServlet extends HttpServlet {
         String action = request.getParameter("action");
         String newStatus = null;
 
-        // Determine new status based on action
+        // Determine new status
         if ("approve".equalsIgnoreCase(action)) {
             newStatus = "Approved";
         } else if ("reject".equalsIgnoreCase(action)) {

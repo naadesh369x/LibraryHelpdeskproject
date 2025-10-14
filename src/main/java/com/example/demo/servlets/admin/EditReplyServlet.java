@@ -36,7 +36,7 @@ public class EditReplyServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            // Check table structure to determine correct column names
+            // Check table structure
             DatabaseMetaData metaData = conn.getMetaData();
             ResultSet ticketsColumns = metaData.getColumns(null, null, "tickets", null);
             Set<String> ticketColumnNames = new HashSet<>();
@@ -151,7 +151,7 @@ public class EditReplyServlet extends HttpServlet {
             boolean hasUpdatedAt = columns.next();
             columns.close();
 
-            // Build SQL based on available columns
+
             String sql;
             if (hasUpdatedAt) {
                 sql = "UPDATE ticket_replies SET message = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";

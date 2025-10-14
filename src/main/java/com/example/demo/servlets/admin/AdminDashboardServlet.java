@@ -54,7 +54,7 @@ public class AdminDashboardServlet extends HttpServlet {
                 }
             }
 
-            //  Pending
+
             pendingTicketsCount = totalTickets - solvedTicketsCount;
 
 

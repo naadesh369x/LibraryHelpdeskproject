@@ -15,7 +15,7 @@ public class ReplyTicketServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String ticketId = request.getParameter("ticketId");
-        String message = request.getParameter("message"); // Changed from "reply" to "message" to match form
+        String message = request.getParameter("message");
 
         if (ticketId == null || ticketId.isEmpty() || message == null || message.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Missing required fields");
@@ -56,7 +56,7 @@ public class ReplyTicketServlet extends HttpServlet {
                 }
             }
 
-            // Insert admin reply
+
             String insertReplySql = "INSERT INTO ticket_replies(ticket_id, sender, description, message) VALUES (?, 'admin', ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insertReplySql)) {
                 ps.setInt(1, Integer.parseInt(ticketId));
@@ -109,7 +109,7 @@ public class ReplyTicketServlet extends HttpServlet {
 
             ticketDetails.put("replies", replies);
 
-            // Set success message in session
+
             HttpSession session = request.getSession();
             session.setAttribute("ticketSuccess", "Reply sent successfully! Ticket marked as solved.");
 

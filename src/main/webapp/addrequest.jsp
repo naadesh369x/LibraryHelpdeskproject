@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    // Get logged-in user information from session
+
     String email = (String) session.getAttribute("email");
     Integer userId = (Integer) session.getAttribute("userId");
     String userName = (String) session.getAttribute("userName");
@@ -14,7 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Full page background */
+
         body {
             min-height: 100vh;
             background: url('images/library-bg.jpg') no-repeat center center fixed;
@@ -27,7 +27,7 @@
             padding: 20px 0;
         }
 
-        /* Overlay */
+
         body::before {
             content: '';
             position: absolute;
@@ -255,7 +255,7 @@
             </div>
 
             <form action="RequestResourceServlet" method="post" id="resourceForm">
-                <!-- Hidden field for user ID if available -->
+
                 <% if (userId != null) { %>
                 <input type="hidden" name="userId" value="<%= userId %>">
                 <% } %>
@@ -321,7 +321,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Form validation
+
         const form = document.getElementById('resourceForm');
 
         form.addEventListener('submit', function(event) {
