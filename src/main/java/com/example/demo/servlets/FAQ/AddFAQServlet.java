@@ -33,7 +33,7 @@ public class AddFAQServlet extends HttpServlet {
             return;
         }
 
-        // SIMPLIFIED: Hardcode the admin ID to 1
+
         Integer adminId = 1;
 
         // Handle file upload with validation

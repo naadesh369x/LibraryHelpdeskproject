@@ -25,17 +25,19 @@ public class FeedbackListServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            //Ensure 'feedbacks' table exists with faqid
+            // Create table if not exists
             String createTableSQL = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='feedbacks' AND xtype='U')
                 CREATE TABLE feedbacks (
-                    faqid INT IDENTITY(1,1) PRIMARY KEY,
+                    feedbackid INT IDENTITY(1,1) PRIMARY KEY,
+                    userId INT NOT NULL,
                     firstname VARCHAR(100) NOT NULL,
                     lastname VARCHAR(100) NOT NULL,
                     email VARCHAR(150) NOT NULL,
                     comment NVARCHAR(MAX) NOT NULL,
                     rating INT NOT NULL,
-                    created_at DATETIME DEFAULT GETDATE()
+                    created_at DATETIME DEFAULT GETDATE(),
+                    FOREIGN KEY (userId) REFERENCES Members(userId)
                 )
             """;
 
@@ -43,14 +45,23 @@ public class FeedbackListServlet extends HttpServlet {
                 stmt.execute(createTableSQL);
             }
 
-            // Select all feedbacks
-            String selectSQL = "SELECT * FROM feedbacks ORDER BY created_at DESC";
+            // Select feedbacks joined with Members table
+            String selectSQL = """
+                SELECT f.feedbackid, f.firstname, f.lastname, f.email, f.comment, 
+                       f.rating, f.created_at, m.userId, m.username
+                FROM feedbacks f
+                INNER JOIN Members m ON f.userId = m.userId
+                ORDER BY f.created_at DESC
+            """;
+
             try (PreparedStatement ps = conn.prepareStatement(selectSQL);
                  ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
                     Map<String, String> fb = new HashMap<>();
-                    fb.put("faqid", String.valueOf(rs.getInt("faqid")));
+                    fb.put("feedbackid", String.valueOf(rs.getInt("feedbackid")));
+                    fb.put("userId", String.valueOf(rs.getInt("userId")));
+                    fb.put("username", rs.getString("username"));
                     fb.put("firstname", rs.getString("firstname"));
                     fb.put("lastname", rs.getString("lastname"));
                     fb.put("email", rs.getString("email"));
@@ -63,6 +74,7 @@ public class FeedbackListServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("error", "Error loading feedbacks: " + e.getMessage());
         }
 
         // Pass data to JSP

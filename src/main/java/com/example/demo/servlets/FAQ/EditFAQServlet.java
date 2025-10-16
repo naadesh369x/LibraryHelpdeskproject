@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 
 @WebServlet("/EditFAQServlet")
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024,      // 1 MB
-        maxFileSize = 1024 * 1024 * 5,       // 5 MB
-        maxRequestSize = 1024 * 1024 * 10    // 10 MB
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 10
 )
 public class EditFAQServlet extends HttpServlet {
 
@@ -27,7 +27,7 @@ public class EditFAQServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // CORRECTED: Get 'faqid' from the request instead of 'id'
+        // 'faqid' from the request
         String faqIdParam = request.getParameter("faqid");
         String question = request.getParameter("question");
         String answer = request.getParameter("answer");
@@ -52,7 +52,7 @@ public class EditFAQServlet extends HttpServlet {
             return;
         }
 
-        // Handle file upload with validation
+
         String fileName = null;
         try {
             Part filePart = request.getPart("faqImage");
@@ -77,10 +77,10 @@ public class EditFAQServlet extends HttpServlet {
             return;
         }
 
-        // Database operations
+
         try (Connection con = DBConnection.getConnection()) {
 
-            // Check if the 'updated_at' column exists, add it if it doesn't
+
             try (ResultSet columns = con.getMetaData().getColumns(null, null, "faq", "updated_at")) {
                 if (!columns.next()) {
                     try (Statement stmt = con.createStatement()) {
@@ -89,13 +89,13 @@ public class EditFAQServlet extends HttpServlet {
                 }
             }
 
-            // Prepare the UPDATE statement
+
             String sql;
             if (fileName != null) {
                 // If a new image is uploaded, update it
                 sql = "UPDATE faq SET question=?, answer=?, image_path=?, updated_at=? WHERE faqid=?";
             } else {
-                // Otherwise, only update text and timestamp
+
                 sql = "UPDATE faq SET question=?, answer=?, updated_at=? WHERE faqid=?";
             }
 

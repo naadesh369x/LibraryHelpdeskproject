@@ -17,7 +17,7 @@ public class Staff {
     public Staff() {
     }
 
-    // Parameterized constructor (for easy object creation)
+    // Parameterized constructor
     public Staff(int staffId, String firstName, String lastName, String email, String password,
                  int age, String gender, String role, String phoneNumber, String hometown) {
         this.staffId = staffId;

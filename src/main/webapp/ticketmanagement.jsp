@@ -456,6 +456,10 @@
                     <button type="button" class="btn btn-success btn-sm" onclick="showReplyBox()">
                         <i class="fas fa-reply"></i> Reply
                     </button>
+                    <!-- Assign to Staff Button -->
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#assignStaffModal">
+                        <i class="fas fa-user-check"></i> Assign to Staff
+                    </button>
                     <% } %>
                 </div>
             </div>
@@ -535,6 +539,38 @@
     </div>
 </div>
 
+<!-- Assign to Staff Modal -->
+<div class="modal fade" id="assignStaffModal" tabindex="-1" aria-labelledby="assignStaffModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="AssignToStaffServlet">
+      <div class="modal-content" style="background: var(--light-color); color: var(--white);">
+        <div class="modal-header">
+          <h5 class="modal-title" id="assignStaffModalLabel">Assign Ticket to Staff</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="ticketId" value="<%= request.getAttribute("ticketId") %>">
+          <input type="hidden" name="category" value="<%= request.getAttribute("category") %>">
+          <input type="hidden" name="status" value="<%= request.getAttribute("status") %>">
+          <input type="hidden" name="created_at" value="<%= request.getAttribute("created_at") %>">
+          <input type="hidden" name="username" value="<%= request.getAttribute("username") %>">
+          <input type="hidden" name="email" value="<%= request.getAttribute("email") %>">
+          <input type="hidden" name="description" value="<%= request.getAttribute("description") %>">
+          <div class="mb-3">
+            <label for="staffReply" class="form-label">Staff Reply Message</label>
+            <textarea class="form-control" id="staffReply" name="staffReply" rows="3" required placeholder="Type staff reply..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-info">
+            <i class="fas fa-user-check"></i> Assign & Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function showReplyBox(){
@@ -543,3 +579,4 @@
 </script>
 </body>
 </html>
+

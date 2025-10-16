@@ -16,37 +16,50 @@ public class EditFeedbackServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        //  Get current logged-in user's email from session
         HttpSession session = request.getSession(false);
         String email = (session != null) ? (String) session.getAttribute("email") : null;
 
 
-        String faqid = request.getParameter("faqid");
+        String feedbackIdStr = request.getParameter("feedbackid");
         String comment = request.getParameter("comment");
         String ratingStr = request.getParameter("rating");
 
-        int rating = (ratingStr != null && !ratingStr.isEmpty())
-                ? Integer.parseInt(ratingStr)
-                : 0;
+        if (feedbackIdStr == null || email == null) {
+            response.sendRedirect("myfeedbacks.jsp?error=Invalid session or feedback ID.");
+            return;
+        }
+
+        int feedbackId = Integer.parseInt(feedbackIdStr);
+        int rating = (ratingStr != null && !ratingStr.isEmpty()) ? Integer.parseInt(ratingStr) : 0;
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            //  Updated SQL query to use faqid
-            String sql = "UPDATE feedbacks SET comment = ?, rating = ? WHERE faqid = ? AND email = ?";
+
+            String sql = """
+                UPDATE feedbacks
+                SET comment = ?, rating = ?
+                WHERE feedbackid = ? AND email = ?
+            """;
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, comment);
                 ps.setInt(2, rating);
-                ps.setInt(3, Integer.parseInt(faqid));
+                ps.setInt(3, feedbackId);
                 ps.setString(4, email);
 
-                ps.executeUpdate();
-            }
+                int rows = ps.executeUpdate();
 
-            response.sendRedirect("myfeedbacks.jsp?success=Feedback updated successfully!");
+                if (rows > 0) {
+                    response.sendRedirect("myfeedbacks.jsp?success=Feedback updated successfully!");
+                } else {
+                    response.sendRedirect("myfeedbacks.jsp?error=No feedback found or unauthorized update.");
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("myfeedbacks.jsp?error=Error updating feedback");
+            response.sendRedirect("myfeedbacks.jsp?error=Error updating feedback: " + e.getMessage());
         }
     }
 }

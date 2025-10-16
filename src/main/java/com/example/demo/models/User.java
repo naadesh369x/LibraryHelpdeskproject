@@ -1,7 +1,7 @@
 package com.example.demo.models;
 
 public class User {
-    private int id; // Added ID field
+    private int id;
     protected String firstName;
     protected String lastName;
     protected String email;

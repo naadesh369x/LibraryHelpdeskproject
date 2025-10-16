@@ -19,6 +19,7 @@ public class DeleteFeedbackServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+
         HttpSession session = request.getSession(false);
         String email = (session != null) ? (String) session.getAttribute("email") : null;
 
@@ -28,32 +29,36 @@ public class DeleteFeedbackServlet extends HttpServlet {
         }
 
 
-        String faqidStr = request.getParameter("faqid");
+        String feedbackIdStr = request.getParameter("feedbackid");
 
-        if (faqidStr != null && !faqidStr.isEmpty()) {
+        if (feedbackIdStr != null && !feedbackIdStr.isEmpty()) {
             try (Connection conn = DBConnection.getConnection()) {
 
-
-                String sql = "DELETE FROM feedbacks WHERE faqid = ? AND email = ?";
+                //  Delete feedback only if it belongs to the logged-in user
+                String sql = "DELETE FROM feedbacks WHERE feedbackid = ? AND email = ?";
 
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setInt(1, Integer.parseInt(faqidStr));
+                    ps.setInt(1, Integer.parseInt(feedbackIdStr));
                     ps.setString(2, email);
 
                     int rowsDeleted = ps.executeUpdate();
 
                     if (rowsDeleted == 0) {
-                        // ither invalid ID or user mismatch
-                        System.out.println("No feedback deleted. Either invalid FAQ ID or not your feedback.");
+                        System.out.println("⚠ No feedback deleted. Either invalid feedback ID or not owned by this user.");
                     }
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
+                response.sendRedirect("myfeedbacks.jsp?error=Error+deleting+feedback");
+                return;
             }
+        } else {
+            response.sendRedirect("myfeedbacks.jsp?error=Invalid+feedback+ID");
+            return;
         }
 
-        // Redirect back to the feedback list
-        response.sendRedirect("myfeedbacks.jsp?message=Feedback+deleted");
+        // Redirect back to feedback list
+        response.sendRedirect("myfeedbacks.jsp?message=Feedback+deleted+successfully");
     }
 }

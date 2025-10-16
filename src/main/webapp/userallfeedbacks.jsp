@@ -8,12 +8,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Reviews</title>
+    <title>All Feedbacks</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,145 +20,101 @@
 
     <style>
         :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #ec4899;
-            --dark-bg: #0f172a;
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --bg-dark: #0f172a;
             --card-bg: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --border-color: #334155;
-            --rating-color: #fbbf24;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --star: #fbbf24;
         }
 
         body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* Modern Top Bar */
+        /* Header Bar */
         .top-bar {
-            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(30, 41, 59, 0.8) 100%);
-            backdrop-filter: blur(10px);
+            background: var(--card-bg);
             padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
         }
 
         .top-bar .logo {
             display: flex;
             align-items: center;
             font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-weight: 600;
+            color: var(--text-main);
         }
 
         .top-bar .logo i {
-            margin-right: 12px;
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-right: 10px;
+            color: var(--primary);
         }
 
         .top-bar .nav a {
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            margin-left: 1rem;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            transition: 0.3s;
         }
 
         .top-bar .nav a:hover {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary-color);
-            transform: translateY(-2px);
+            color: var(--primary);
         }
 
-        /* Main Content */
+        /* Content */
         .main-content {
-            flex: 1;
             padding: 2rem;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
         }
 
         .page-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .page-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .page-header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            color: var(--text-muted);
         }
 
-        /* Reviews Grid */
+        /* Feedback Grid */
         .reviews-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
         }
 
-        /* Modern Review Cards */
         .review-card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .review-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .review-card:hover::before {
-            transform: scaleX(1);
+            border: 1px solid var(--border);
+            transition: 0.3s;
         }
 
         .review-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .review-header {
@@ -170,195 +124,117 @@
         }
 
         .review-avatar {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #fff;
             font-weight: 600;
-            font-size: 1.2rem;
-            margin-right: 1rem;
+            margin-right: 12px;
         }
 
         .review-info h3 {
             font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
+            margin: 0;
         }
 
-        .review-date {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+        .review-info small {
+            color: var(--text-muted);
         }
 
         .review-comment {
-            margin-bottom: 1rem;
+            color: var(--text-main);
             line-height: 1.6;
-            color: var(--text-primary);
-        }
-
-        .review-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .review-rating .stars {
-            display: flex;
-            gap: 2px;
+            margin-bottom: 1rem;
         }
 
         .review-rating i {
-            color: var(--rating-color);
-            font-size: 1rem;
+            color: var(--star);
         }
 
-        .review-rating .rating-value {
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-left: 0.5rem;
-        }
-
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
+            color: var(--text-muted);
         }
 
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .empty-state p {
-            color: var(--text-secondary);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--card-bg);
-            padding: 1.5rem;
+        footer {
             text-align: center;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 1rem;
-            }
-
-            .top-bar .logo {
-                font-size: 1.2rem;
-            }
-
-            .top-bar .logo i {
-                font-size: 1.5rem;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .page-header h2 {
-                font-size: 2rem;
-            }
-
-            .reviews-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-<!-- Modern Top Bar -->
-<nav class="top-bar">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <div class="logo">
-                    <i class="fas fa-star"></i>
-                    Library Reviews
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="nav d-flex justify-content-end">
-                    <a href="admin-dashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
-                    <a href="listFAQAdmin.jsp"><i class="fas fa-question-circle"></i> FAQ</a>
-                    <a href="FeedbackListServlet"><i class="fas fa-comment-dots"></i> Feedbacks</a>
-                </div>
-            </div>
-        </div>
+<!-- Header -->
+<div class="top-bar">
+    <div class="logo">
+        <i class="fas fa-star"></i> Library Feedbacks
     </div>
-</nav>
+    <div class="nav">
+        <a href="admin-dashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="listFAQAdmin.jsp"><i class="fas fa-question-circle"></i> FAQ</a>
+        <a href="FeedbackListServlet"><i class="fas fa-comment-dots"></i> Feedbacks</a>
+    </div>
+</div>
 
 <!-- Main Content -->
-<main class="main-content">
+<div class="main-content">
     <div class="page-header">
-        <h2>All Reviews</h2>
-        <p>See what people are saying about our library</p>
+        <h2>All Feedbacks</h2>
+        <p>See what users are saying about our library</p>
     </div>
 
     <% if (feedbackList != null && !feedbackList.isEmpty()) { %>
     <div class="reviews-grid">
-        <% for (Map<String,String> fb : feedbackList) {
+        <% for (Map<String, String> fb : feedbackList) {
             int rating = Integer.parseInt(fb.get("rating"));
-            String initials = fb.get("firstname").substring(0,1) + fb.get("lastname").substring(0,1);
+            String initials = fb.get("firstname").substring(0, 1) + fb.get("lastname").substring(0, 1);
         %>
         <div class="review-card">
             <div class="review-header">
                 <div class="review-avatar"><%= initials %></div>
                 <div class="review-info">
                     <h3><%= fb.get("firstname") %> <%= fb.get("lastname") %></h3>
-                    <div class="review-date"><%= fb.get("created_at") %></div>
+                    <small><%= fb.get("created_at") %></small>
                 </div>
             </div>
+
             <div class="review-comment">
                 <%= fb.get("comment") %>
             </div>
+
             <div class="review-rating">
-                <div class="stars">
-                    <% for(int i=1;i<=5;i++){ %>
-                    <% if(i <= rating){ %>
-                    <i class="fas fa-star"></i>
-                    <% } else { %>
-                    <i class="far fa-star"></i>
-                    <% } %>
-                    <% } %>
-                </div>
-                <span class="rating-value"><%= rating %>/5</span>
+                <% for (int i = 1; i <= 5; i++) { %>
+                <% if (i <= rating) { %>
+                <i class="fas fa-star"></i>
+                <% } else { %>
+                <i class="far fa-star"></i>
+                <% } %>
+                <% } %>
+                <span class="ms-2 text-muted"><%= rating %>/5</span>
             </div>
         </div>
         <% } %>
     </div>
     <% } else { %>
     <div class="empty-state">
-        <i class="fas fa-comment-slash"></i>
-        <h3>No Reviews Available</h3>
-        <p>There are no reviews to display at this time.</p>
+        <i class="fas fa-comment-slash fa-3x mb-3"></i>
+        <h4>No Feedbacks Yet</h4>
+        <p>There are currently no feedbacks to display.</p>
     </div>
     <% } %>
-</main>
+</div>
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        &copy; 2025 Library Help Desk. All Rights Reserved.
-    </div>
+<footer>
+    &copy; 2025 Library Help Desk. All Rights Reserved.
 </footer>
 
 </body>
