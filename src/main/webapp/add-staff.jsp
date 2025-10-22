@@ -207,7 +207,7 @@
     <a href="FeedbackListServlet"><i class="fas fa-check-circle"></i> Feedbacks</a>
     <a href="add-staff.jsp" class="active"><i class="fas fa-users"></i> Add Staffs</a>
     <a href="manage-users"><i class="fas fa-play-circle"></i> Manage Users</a>
-    <a href="profile.jsp"><i class="fas fa-cog"></i> Profile Settings</a>
+   
 </nav>
 
 <!-- Header Bar -->

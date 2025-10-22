@@ -426,8 +426,8 @@
                                         <option value="">Select a category</option>
                                         <option value="Technical Issue">Technical Issue</option>
                                         <option value="Account Problem">Account Problem</option>
-                                        <option value="Billing Question">Billing Question</option>
-                                        <option value="Feature Request">Feature Request</option>
+                                        <option value="Borrowing Book">Borrowing Book</option>
+                                        <option value=" Feature Request">Feature Request</option>
                                         <option value="Bug Report">Bug Report</option>
                                         <option value="Other">Other</option>
                                     </select>

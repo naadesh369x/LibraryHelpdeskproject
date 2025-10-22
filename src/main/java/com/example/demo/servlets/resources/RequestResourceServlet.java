@@ -67,7 +67,7 @@ public class RequestResourceServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            // Create table if it doesn't exist
+
             createResourceRequestTable(conn);
             // Insert the resource request
             String insertSQL = """

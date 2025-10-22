@@ -27,7 +27,7 @@
     <div class="d-flex justify-content-between align-items-center py-3">
         <h2>Staff Ticket Management</h2>
         <div class="d-flex gap-2">
-            <a href="staff-dashboard.jsp" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Dashboard</a>
+            <a href="staffdashboard.jsp" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Dashboard</a>
             <a href="mainpage.jsp" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>

@@ -1,241 +1,225 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="java.util.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<%@ page import="java.sql.*, java.util.*" %>
+<%@ page import="com.example.demo.utils.DBConnection" %>
+
 <%
-    List<Map<String,String>> feedbackList = (List<Map<String,String>>) request.getAttribute("feedbackList");
+    HttpSession session1 = request.getSession(false);
+    String email = (session1 != null) ? (String) session1.getAttribute("email") : null;
+    Integer userId = (session1 != null) ? (Integer) session1.getAttribute("userid") : null;
+    String userName = (session1 != null) ? (String) session1.getAttribute("userName") : null;
+
+    if (email == null) {
+        response.sendRedirect("login.jsp?error=Please+login+first");
+        return;
+    }
+
+    List<Map<String, String>> feedbacks = new ArrayList<>();
+    try (Connection conn = DBConnection.getConnection()) {
+        // Modified query to get all feedbacks, not just the current user's
+        String sql = "SELECT * FROM feedbacks ORDER BY created_at DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, String> fb = new HashMap<>();
+                    fb.put("feedbackid", String.valueOf(rs.getInt("feedbackid")));
+                    fb.put("firstname", rs.getString("firstname"));
+                    fb.put("lastname", rs.getString("lastname"));
+                    fb.put("comment", rs.getString("comment"));
+                    fb.put("rating", String.valueOf(rs.getInt("rating")));
+                    fb.put("created_at", rs.getTimestamp("created_at").toString());
+                    feedbacks.add(fb);
+                }
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    String successMsg = request.getParameter("success");
+    String errorMsg = request.getParameter("error");
 %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Feedbacks</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --star: #fbbf24;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('images/library-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            color: #fff;
+        }
+        body::before {
+            content: "";
+            position: fixed; top:0; left:0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: -1;
         }
 
-        /* Header Bar */
         .top-bar {
-            background: var(--card-bg);
-            padding: 1rem 2rem;
+            width: 100%;
+            height: 64px;
+            background: rgba(44,62,80,0.9);
+            color: #fff;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            justify-content: space-between;
+            padding: 0 32px;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
         }
+        .top-bar .logo { display:flex; align-items:center; font-size:1.4rem; font-weight:bold; }
+        .top-bar .logo i { margin-right:10px; color:#ffda6a; font-size:2rem; }
+        .top-bar .nav a { color:#fff; text-decoration:none; padding:8px 16px; border-radius:8px; background: rgba(0,0,0,0.3); margin-right:10px; transition:0.2s; }
+        .top-bar .nav a:hover { background:#6c63ff; }
+        .logout-btn { background: linear-gradient(90deg,#e74c3c,#ff7f7f); color:#fff; border-radius:8px; padding:8px 16px; text-decoration:none; }
+        .logout-btn:hover { background:#c0392b; }
 
-        .top-bar .logo {
+        .container { max-width: 1200px; margin: 40px auto; position: relative; z-index:1; }
+        h2 { text-align:center; margin-bottom:30px; text-shadow:1px 1px 5px rgba(0,0,0,0.5); }
+
+        .feedbacks-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; }
+        .feedback-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            transition:0.3s;
+            border:1px solid rgba(255,255,255,0.2);
+        }
+        .feedback-card:hover { transform: translateY(-6px) scale(1.02); }
+
+        .feedback-header { font-weight:700; color:#ffda6a; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+        .feedback-comment { font-size:0.95rem; margin-bottom:10px; color:#fff; }
+        .feedback-date { font-size:0.85rem; color:#ddd; margin-bottom:12px; }
+
+        .feedback-stats {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            margin-bottom: 30px;
             display: flex;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-main);
+            justify-content: space-around;
+            flex-wrap: wrap;
+            border:1px solid rgba(255,255,255,0.2);
         }
 
-        .top-bar .logo i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-
-        .top-bar .nav a {
-            color: var(--text-muted);
-            margin-left: 1rem;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .top-bar .nav a:hover {
-            color: var(--primary);
-        }
-
-        /* Content */
-        .main-content {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .page-header {
+        .stat-item {
             text-align: center;
-            margin-bottom: 2rem;
+            padding: 10px 20px;
         }
 
-        .page-header h2 {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffda6a;
         }
 
-        .page-header p {
-            color: var(--text-muted);
-        }
-
-        /* Feedback Grid */
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .review-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-        }
-
-        .review-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .review-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .review-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-weight: 600;
-            margin-right: 12px;
-        }
-
-        .review-info h3 {
-            font-size: 1.1rem;
-            margin: 0;
-        }
-
-        .review-info small {
-            color: var(--text-muted);
-        }
-
-        .review-comment {
-            color: var(--text-main);
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        .review-rating i {
-            color: var(--star);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-        }
-
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
-            margin-top: 2rem;
-            color: var(--text-muted);
+        .stat-label {
+            font-size: 0.9rem;
+            color: #ddd;
         }
     </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="top-bar">
-    <div class="logo">
-        <i class="fas fa-star"></i> Library Feedbacks
-    </div>
+    <div class="logo"><i class="fas fa-star"></i> All Feedbacks</div>
     <div class="nav">
-        <a href="admin-dashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="listFAQAdmin.jsp"><i class="fas fa-question-circle"></i> FAQ</a>
-        <a href="FeedbackListServlet"><i class="fas fa-comment-dots"></i> Feedbacks</a>
+        <a href="dashboard.jsp"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="addfeedback.jsp"><i class="fas fa-plus"></i> Add Feedback</a>
     </div>
+    <a href="mainpage.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 
-<!-- Main Content -->
-<div class="main-content">
-    <div class="page-header">
-        <h2>All Feedbacks</h2>
-        <p>See what users are saying about our library</p>
+<div class="container">
+    <h2>All Feedbacks</h2>
+
+    <% if(successMsg != null){ %>
+    <div class="alert alert-success text-dark"><%= successMsg %></div>
+    <% } %>
+    <% if(errorMsg != null){ %>
+    <div class="alert alert-danger text-dark"><%= errorMsg %></div>
+    <% } %>
+
+    <div class="feedback-stats">
+        <div class="stat-item">
+            <div class="stat-value"><%= feedbacks.size() %></div>
+            <div class="stat-label">Total Feedbacks</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">
+                <%
+                    double avgRating = 0;
+                    if (!feedbacks.isEmpty()) {
+                        int totalRating = 0;
+                        for (Map<String, String> fb : feedbacks) {
+                            totalRating += Integer.parseInt(fb.get("rating"));
+                        }
+                        avgRating = (double) totalRating / feedbacks.size();
+                        out.print(String.format("%.1f", avgRating));
+                    } else {
+                        out.print("0.0");
+                    }
+                %>
+            </div>
+            <div class="stat-label">Average Rating</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">
+                <%
+                    int fiveStarCount = 0;
+                    for (Map<String, String> fb : feedbacks) {
+                        if (Integer.parseInt(fb.get("rating")) == 5) {
+                            fiveStarCount++;
+                        }
+                    }
+                    out.print(fiveStarCount);
+                %>
+            </div>
+            <div class="stat-label">5-Star Reviews</div>
+        </div>
     </div>
 
-    <% if (feedbackList != null && !feedbackList.isEmpty()) { %>
-    <div class="reviews-grid">
-        <% for (Map<String, String> fb : feedbackList) {
-            int rating = Integer.parseInt(fb.get("rating"));
-            String initials = fb.get("firstname").substring(0, 1) + fb.get("lastname").substring(0, 1);
-        %>
-        <div class="review-card">
-            <div class="review-header">
-                <div class="review-avatar"><%= initials %></div>
-                <div class="review-info">
-                    <h3><%= fb.get("firstname") %> <%= fb.get("lastname") %></h3>
-                    <small><%= fb.get("created_at") %></small>
-                </div>
+    <div class="feedbacks-grid">
+        <% if(feedbacks != null && !feedbacks.isEmpty()){
+            for(Map<String,String> fb : feedbacks){ %>
+        <div class="feedback-card">
+            <div class="feedback-header">
+                <span><%= fb.get("firstname") %> <%= fb.get("lastname") %></span>
+                <span>
+                    <% int rating = Integer.parseInt(fb.get("rating"));
+                        for(int i=1;i<=5;i++){
+                            if(i<=rating){ %>
+                              <i class="fas fa-star" style="color:#f1c40f;"></i>
+                    <% } else { %>
+                              <i class="far fa-star" style="color:#f1c40f;"></i>
+                    <% }} %>
+                </span>
             </div>
-
-            <div class="review-comment">
-                <%= fb.get("comment") %>
-            </div>
-
-            <div class="review-rating">
-                <% for (int i = 1; i <= 5; i++) { %>
-                <% if (i <= rating) { %>
-                <i class="fas fa-star"></i>
-                <% } else { %>
-                <i class="far fa-star"></i>
-                <% } %>
-                <% } %>
-                <span class="ms-2 text-muted"><%= rating %>/5</span>
-            </div>
+            <div class="feedback-comment"><strong>Comment:</strong> <%= fb.get("comment") %></div>
+            <div class="feedback-date">Submitted on: <%= fb.get("created_at") %></div>
+        </div>
+        <% }} else { %>
+        <div class="feedback-card text-center">
+            <div class="feedback-header">No Feedbacks Yet</div>
+            <div class="feedback-comment">No feedbacks have been submitted yet. Be the first to add one!</div>
         </div>
         <% } %>
     </div>
-    <% } else { %>
-    <div class="empty-state">
-        <i class="fas fa-comment-slash fa-3x mb-3"></i>
-        <h4>No Feedbacks Yet</h4>
-        <p>There are currently no feedbacks to display.</p>
-    </div>
-    <% } %>
 </div>
-
-<footer>
-    &copy; 2025 Library Help Desk. All Rights Reserved.
-</footer>
 
 </body>
 </html>

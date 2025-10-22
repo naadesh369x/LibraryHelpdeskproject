@@ -634,10 +634,9 @@
 <div class="top-bar" id="topBar">
     <div class="left"><h2><i class="fas fa-book-reader"></i> Library Help Desk</h2></div>
     <div class="right">
-        <a href="#hero">Home</a>
+
         <a href="#about">About</a>
         <a href="#services">Services</a>
-        <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
         <a href="login.jsp" class="login-btn"><i class="fas fa-user"></i> Login</a>
     </div>

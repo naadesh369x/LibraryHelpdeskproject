@@ -28,6 +28,20 @@
         .status-new { background-color: #33b5e5; }
         .status-pending { background-color: #ffbb33; color: #000; }
         .status-solved { background-color: #00c851; }
+        .top-bar .nav-icons .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger-color);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         @media (max-width: 767.98px) {
             .sidebar { position: relative; width: 100%; height: auto; padding: 10px 0; overflow-y: visible; }
             .header-bar { left: 0; }
@@ -45,10 +59,11 @@
     <a href="AdminRequestsServlet"><i class="fas fa-plus-circle"></i> Manage request resources</a>
     <a href="listFAQAdmin.jsp"><i class="fas fa-question-circle"></i> Manage FAQ</a>
     <a href="ViewAllRepliesServlet"><i class="fas fa-hourglass-half"></i> Replied Tickets</a>
-    <a href="FeedbackListServlet"><i class="fas fa-comment-dots"></i> Feedbacks</a>
+    <a href="adminreview.jsp"><i class="fas fa-comment-dots"></i> Feedbacks</a>
     <a href="add-staff.jsp"><i class="fas fa-users"></i> Add Staffs</a>
     <a href="manage-users"><i class="fas fa-user-cog"></i> Manage Users</a>
-    <a href="profile.jsp"><i class="fas fa-cog"></i> Profile Settings</a>
+    <a href="adminregister.jsp"><i class="fas fa-cog"></i> Add Admin</a>
+    <a href="adminsendmessage.jsp"><i class="notification-badge"></i> Send Alert</a>
 </nav>
 
 <!-- Header Bar -->

@@ -17,7 +17,7 @@ public class Ticket {
     public Ticket() {
     }
 
-    // Parameterized constructor (for convenience)
+    // Parameterized constructor
     public Ticket(int ticketId, int userId, String username, String category, String description,
                   String email, String mobile, String status, Date createdAt) {
         this.ticketId = ticketId;

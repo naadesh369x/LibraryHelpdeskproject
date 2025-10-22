@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @WebServlet("/AddFAQServlet")
-@MultipartConfig(maxFileSize = 1024 * 1024 * 5) // 5 MB max file size
+@MultipartConfig(maxFileSize = 1024 * 1024 * 5) 
 public class AddFAQServlet extends HttpServlet {
 
     @Override

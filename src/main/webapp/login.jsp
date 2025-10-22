@@ -88,8 +88,38 @@
 
         .login-right h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             color: #27ae60;
+        }
+
+        .login-type-selector {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .login-type-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .login-type-select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .login-type-select:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
         }
 
         .form-control {
@@ -162,6 +192,15 @@
     <div class="login-right">
         <h2><i class="fas fa-book-reader"></i> Student Login</h2>
 
+        <div class="login-type-selector">
+            <label for="loginType">Login as:</label>
+            <select id="loginType" class="login-type-select">
+                <option value="student" selected>Student</option>
+                <option value="staff">Staff</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+
         <% String success = request.getParameter("success");
             if (success != null) { %>
         <div class="alert alert-success"><%= success %></div>
@@ -191,6 +230,36 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginTypeSelect = document.getElementById('loginType');
+        const loginTitle = document.querySelector('.login-right h2');
+        const loginForm = document.querySelector('form');
+
+        loginTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+
+            // Update the login title based on selection
+            switch(selectedType) {
+                case 'admin':
+                    loginTitle.innerHTML = '<i class="fas fa-user-shield"></i> Admin Login';
+
+                    window.location.href = 'adminlogin.jsp';
+                    break;
+                case 'staff':
+                    loginTitle.innerHTML = '<i class="fas fa-user-tie"></i> Staff Login';
+
+                    window.location.href = 'stafflogin.jsp';
+                    break;
+                default:
+                    loginTitle.innerHTML = '<i class="fas fa-book-reader"></i> Student Login';
+
+                    break;
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

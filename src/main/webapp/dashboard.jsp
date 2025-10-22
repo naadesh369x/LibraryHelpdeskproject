@@ -98,12 +98,27 @@
             align-items: center;
             gap: 8px;
             font-weight: 500;
+            position: relative;
         }
         .top-bar .nav-icons a:hover {
             background: var(--primary-color);
             color: var(--white);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(78, 115, 223, 0.3);
+        }
+        .top-bar .nav-icons .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--danger-color);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .top-bar .user-section {
             display: flex;
@@ -613,6 +628,10 @@
         <a href="profile.jsp" title="My Profile">
             <i class="fas fa-user-cog"></i> My Profile
         </a>
+        <a href="userNotifications.jsp" title="Notifications">
+            <i class="fas fa-bell"></i> Notifications
+            <span class="notification-badge"></span>
+        </a>
     </div>
     <div class="user-section">
         <span class="user-email">
@@ -654,7 +673,7 @@
             <!-- Book Cards -->
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e2d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Clean Code">
+                    <img src="images/book1.jpg" alt="Clean Code">
                     <div class="book-category">Programming</div>
                 </div>
                 <div class="book-info">
@@ -663,7 +682,7 @@
                         <i class="fas fa-user"></i> Robert C. Martin
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Clean Code', 'Robert C. Martin', 'Programming', 'https://images.unsplash.com/photo-1532012197267-da84d127e2d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Clean Code', 'Robert C. Martin', 'Programming', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -671,7 +690,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Effective Java">
+                    <img src="images/book1.jpg" alt="Effective Java">
                     <div class="book-category">Java</div>
                 </div>
                 <div class="book-info">
@@ -680,7 +699,7 @@
                         <i class="fas fa-user"></i> Joshua Bloch
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Effective Java', 'Joshua Bloch', 'Java', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Effective Java', 'Joshua Bloch', 'Java', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -688,7 +707,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1544947950-f507427a377e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Design Patterns">
+                    <img src="images/book1.jpg" alt="Design Patterns">
                     <div class="book-category">Software Design</div>
                 </div>
                 <div class="book-info">
@@ -697,7 +716,7 @@
                         <i class="fas fa-user"></i> Erich Gamma
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Design Patterns', 'Erich Gamma', 'Software Design', 'https://images.unsplash.com/photo-1544947950-f507427a377e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Design Patterns', 'Erich Gamma', 'Software Design', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -705,7 +724,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="The Pragmatic Programmer">
+                    <img src="images/book1.jpg" alt="The Pragmatic Programmer">
                     <div class="book-category">Programming</div>
                 </div>
                 <div class="book-info">
@@ -714,7 +733,7 @@
                         <i class="fas fa-user"></i> Andrew Hunt
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('The Pragmatic Programmer', 'Andrew Hunt', 'Programming', 'https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('The Pragmatic Programmer', 'Andrew Hunt', 'Programming', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -722,7 +741,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1568667256549-094345857637?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Java Concurrency">
+                    <img src="images/book1.jpg" alt="Java Concurrency">
                     <div class="book-category">Java</div>
                 </div>
                 <div class="book-info">
@@ -731,7 +750,7 @@
                         <i class="fas fa-user"></i> Brian Goetz
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Java Concurrency in Practice', 'Brian Goetz', 'Java', 'https://images.unsplash.com/photo-1568667256549-094345857637?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Java Concurrency in Practice', 'Brian Goetz', 'Java', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -739,7 +758,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Head First Java">
+                    <img src="images/book1.jpg" alt="Head First Java">
                     <div class="book-category">Java</div>
                 </div>
                 <div class="book-info">
@@ -748,7 +767,7 @@
                         <i class="fas fa-user"></i> Kathy Sierra
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Head First Java', 'Kathy Sierra', 'Java', 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Head First Java', 'Kathy Sierra', 'Java', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -756,7 +775,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e2d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Introduction to Algorithms">
+                    <img src="images/book1.jpg" alt="Introduction to Algorithms">
                     <div class="book-category">Algorithms</div>
                 </div>
                 <div class="book-info">
@@ -765,7 +784,7 @@
                         <i class="fas fa-user"></i> Thomas H. Cormen
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Introduction to Algorithms', 'Thomas H. Cormen', 'Algorithms', 'https://images.unsplash.com/photo-1532012197267-da84d127e2d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Introduction to Algorithms', 'Thomas H. Cormen', 'Algorithms', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -773,7 +792,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1544947950-f507427a377e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Refactoring">
+                    <img src="images/book1.jpg" alt="Refactoring">
                     <div class="book-category">Software Design</div>
                 </div>
                 <div class="book-info">
@@ -782,7 +801,7 @@
                         <i class="fas fa-user"></i> Martin Fowler
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Refactoring', 'Martin Fowler', 'Software Design', 'https://images.unsplash.com/photo-1544947950-f507427a377e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Refactoring', 'Martin Fowler', 'Software Design', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -791,7 +810,7 @@
             <!-- Add more book cards with pictures below -->
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80" alt="Python Crash Course">
+                    <img src="images/book1.jpg" alt="Python Crash Course">
                     <div class="book-category">Python</div>
                 </div>
                 <div class="book-info">
@@ -800,7 +819,7 @@
                         <i class="fas fa-user"></i> Eric Matthes
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Python Crash Course', 'Eric Matthes', 'Python', 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Python Crash Course', 'Eric Matthes', 'Python', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -808,7 +827,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=500&q=80" alt="Deep Learning">
+                    <img src="images/book1.jpg" alt="Deep Learning">
                     <div class="book-category">AI</div>
                 </div>
                 <div class="book-info">
@@ -817,7 +836,7 @@
                         <i class="fas fa-user"></i> Ian Goodfellow
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('Deep Learning', 'Ian Goodfellow', 'AI', 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('Deep Learning', 'Ian Goodfellow', 'AI', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -825,7 +844,7 @@
             </div>
             <div class="book-card">
                 <div class="book-cover">
-                    <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=500&q=80" alt="You Don't Know JS">
+                    <img src="images/book1.jpg" alt="You Don't Know JS">
                     <div class="book-category">JavaScript</div>
                 </div>
                 <div class="book-info">
@@ -834,7 +853,7 @@
                         <i class="fas fa-user"></i> Kyle Simpson
                     </div>
                     <div class="book-actions">
-                        <button class="btn btn-primary" onclick="showBookDetails('You Don\'t Know JS', 'Kyle Simpson', 'JavaScript', 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=500&q=80')">
+                        <button class="btn btn-primary" onclick="showBookDetails('You Don\'t Know JS', 'Kyle Simpson', 'JavaScript', 'images/book1.jpg')">
                             <i class="fas fa-book-open"></i> Details
                         </button>
                     </div>
@@ -1018,4 +1037,3 @@
 
 </body>
 </html>
-
