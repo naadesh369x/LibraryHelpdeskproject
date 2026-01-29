@@ -1,3 +1,7 @@
+This is a small project using java web based project for Library Help desk.
+
+
+
 <img width="1910" height="886" alt="image" src="https://github.com/user-attachments/assets/c519a0c1-7e63-47d0-b5fb-848c5ff4c5df" />
 <img width="1918" height="912" alt="image" src="https://github.com/user-attachments/assets/17704297-7d85-477f-b281-3cd6a4849e79" />
 <img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/2fa4e9b7-64a1-40f4-ab65-7e8c3164efc3" />
