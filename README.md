@@ -1,4 +1,21 @@
 This is a small Java-based web application developed for managing library support services. The system uses a Microsoft SQL Server database and allows users to raise help desk tickets to library staff or administrators. Users can also request library resources through the system. It helps streamline communication, track issues efficiently, and improve library service management.
+1.)Clone the repository
+git clone 
+Import into IntelliJ or VS Code (with Java & Maven support)
+
+Build the project
+
+ Run with Apache Tomcat 10.1.x Deploy WAR file or run directly via IDE
+
+Access via browser
+
+System Requirements Java JDK 17+
+
+Apache Tomcat 10.1.x
+
+Maven 3+
+
+Web browser
 
 <img width="1910" height="886" alt="image" src="https://github.com/user-attachments/assets/c519a0c1-7e63-47d0-b5fb-848c5ff4c5df" />
 <img width="1918" height="912" alt="image" src="https://github.com/user-attachments/assets/17704297-7d85-477f-b281-3cd6a4849e79" />
